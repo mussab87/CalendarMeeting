@@ -1,0 +1,145 @@
+﻿@model List<UserDto>
+@{
+    ViewData["Title"] = "المستخدمين";
+    ViewData["action"] = "GetUsers";
+}
+
+<!--begin::Container-->
+<div class="container">
+    <!--begin::Card-->
+    <div class="card card-custom">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="card-icon">
+                    <i class="flaticon2-favourite text-primary"></i>
+                </span>
+                <h3 class="card-label">المستخدمين</h3>
+            </div>
+            <div class="card-toolbar">
+                <!--begin::Dropdown-->
+                <div class="dropdown dropdown-inline mr-2">
+                    <button type="button" class="btn btn-light-primary font-weight-bolder dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="la la-download"></i>Export
+                    </button>
+                    <!--begin::Dropdown Menu-->
+                    <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+                        <ul class="nav flex-column nav-hover">
+                            <li class="nav-header font-weight-bolder text-uppercase text-primary pb-2">Choose an option:</li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon la la-print"></i>
+                                    <span class="nav-text">Print</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon la la-copy"></i>
+                                    <span class="nav-text">Copy</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon la la-file-excel-o"></i>
+                                    <span class="nav-text">Excel</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon la la-file-text-o"></i>
+                                    <span class="nav-text">CSV</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon la la-file-pdf-o"></i>
+                                    <span class="nav-text">PDF</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--end::Dropdown Menu-->
+                </div>
+                <!--end::Dropdown-->
+                &nbsp;
+                <!--begin::Button-->
+                <a href="#" class="btn btn-primary font-weight-bolder">
+                    <i class="la la-plus"></i>New Record
+                </a>
+                <!--end::Button-->
+            </div>
+        </div>
+        <div class="card-body">
+
+            <!--begin: Datatable-->
+            <table class="datatable datatable-bordered datatable-head-custom" id="kt_datatable" style="margin-top: 13px !important">
+                <thead>
+                    <tr role="row">
+
+                        <th>الاسم</th>
+                        <th>اسم المستخدم</th>
+                        <th>حالة الحساب</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@user.Name</td>
+                                <td>@user.Username</td>
+                                <td>
+                                    @user.IsActive
+                                    @* @{
+                                        if ((bool)user.IsActive)
+                                        {
+                                            <b>مفعل</b>
+                                        }
+                                        else
+                                        {
+                                            <b>غير مفعل</b>
+                                        }
+                                    } *@
+                                </td>
+                                <td>
+                                    <div class="dropdown dropdown-inline">
+
+                                        <a href="javascript:;" class="btn btn-sm btn-clean btn-icon" data-toggle="dropdown">
+
+                                            <i class="la la-cog"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+
+                                            <ul class="nav nav-hoverable flex-column">
+
+                                                <li class="nav-item"><a class="nav-link" href="#"><i class="nav-icon la la-edit"></i><span class="nav-text">Edit Details</span></a></li>
+                                                <li class="nav-item"><a class="nav-link" href="#"><i class="nav-icon la la-leaf"></i><span class="nav-text">Update Status</span></a></li>
+                                                <li class="nav-item"><a class="nav-link" href="#"><i class="nav-icon la la-print"></i><span class="nav-text">Print</span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon" title="Edit details">
+
+                                        <i class="la la-edit"></i>
+                                    </a>
+                                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon" title="Delete">
+
+                                        <i class="la la-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+
+            <!--end: Datatable-->
+        </div>
+
+    </div>
+
+    <!--end::Card-->
+</div>
+<!--end::Container-->

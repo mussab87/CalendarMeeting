@@ -1,0 +1,329 @@
+﻿<script src="~/assets/js/pages/widgets.js"></script>
+
+<script>
+    // Workaround to fix style of text for showing items .. through ..
+    // Problem related to Boostrap 4 according to issue in link below
+    $(document).ready(function () {
+    $('ul.pagination > li.disabled > a').addClass('page-link');
+
+    });
+    document.getElementById('pageSizeSelector').addEventListener('change', function() {
+    document.getElementById('searchForm').submit();
+    });
+
+    $('#userModal').on('submit', 'form', function(e) {
+        e.preventDefault(); // Prevent default form submission
+        debugger
+        $.ajax({
+            url: this.action,
+            type: this.method,
+            data: $(this).serialize(),
+            success: function(result) {
+                // Update just the modal content
+                debugger
+                if(result.success){
+                    window.location.reload();
+                    // Show success notification
+                toastr.success(result.data);
+                }
+                else{
+                    $('#userModal .modal-content').empty().html(result);
+                    $('#userModal .modal-content').html(result);
+                }
+            }
+        });
+    });
+        $(function() {
+        // Load partial view into modal when Add User button is clicked
+        $("#addUserButton").click(function() {
+
+            $.ajax({
+                url: '@Url.Action("AddEditUser", "Admin", new { actionType = (int)ActionTypeEnum.Add })',
+                type: 'GET',
+                success: function(response) {
+                    $('#modalContent').html(response);
+                    $('#userModal').modal('show');
+                    $("#exampleModalLabel").text("إضافة مستخدم");
+                    //$("#errorAdd").html("test error message")
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+
+    function updateUserButton(selectedUserId){
+
+            $.ajax({
+                url: '@Url.Action("AddEditUser", "Admin", new { actionType = (int)ActionTypeEnum.Update })' + '&userId=' + selectedUserId,
+                type: 'GET',
+                success: function(response) {
+                    $('#modalContent').html(response);
+                    $('#userModal').modal('show');
+                    $("#exampleModalLabel").text("تعديل مستخدم");
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+    }
+
+    function deleteUserButton(selectedUserId){
+        debugger;
+                   Swal.fire({
+            text: "هل انت متأكد من حذف هذا المستخدم",
+            icon: "info",
+            showCancelButton: true,
+            buttonsStyling: false,
+            confirmButtonText: "نعم ،احذف المستخدم",
+            cancelButtonText: "لا، الغاء",
+            customClass: {
+                confirmButton: "btn font-weight-bold btn-success",
+                cancelButton: "btn font-weight-bold btn-danger"
+            }
+        }).then(function (result) {
+            if (result.value) {
+               // Submit form
+               $.ajax({
+                url: '@Url.Action("DeleteUser", "Admin")',
+                type: 'POST',
+                data: { userId: selectedUserId },
+                success: function(response) {
+                    if(response.success)
+                    {
+                        Swal.fire({
+                    text: response.data,
+                    icon: "success",
+                    buttonsStyling: false,
+                    confirmButtonText: "اغلاق",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-primary",
+                    }
+                }).then(function (result) {
+                window.location.reload();
+                });
+
+                    }
+                    else{
+                        toastr.success(response.data);
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+            } else if (result.dismiss === 'cancel') {
+                Swal.fire({
+                    text: "لم يتم حفظ التعديلات",
+                    icon: "error",
+                    buttonsStyling: false,
+                    confirmButtonText: "اغلاق",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-primary",
+                    }
+                });
+            }
+        });
+    }
+
+    $(document).on('change', '#DepartmentTypeId', function () {
+    var selectedValue = $(this).val();
+    var departmentSelect = $('#DepartmentId');
+
+    departmentSelect.empty();
+    departmentSelect.append('<option value="">اختر من القائمة</option>');
+
+    if (selectedValue) {
+        $.ajax({
+            url: '@Url.Action("GetDepartmentsByType", "Admin")',
+            type: 'GET',
+            data: { departmentTypeId: selectedValue },
+            success: function (data) {
+                $.each(data, function (index, item) {
+                    departmentSelect.append('<option value="' + item.id + '">' + item.name + '</option>');
+                });
+            },
+            error: function () {
+                console.log('خطأ في تحميل البيانات');
+            }
+        });
+    }
+    });
+
+    // Add Department functionality - using event delegation for dynamically loaded content
+    $(document).on('click', '#btnAddDepartment', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Add Department button clicked');
+        // Load department types into the modal
+        loadDepartmentTypes();
+        $('#addDepartmentModal').modal('show');
+    });
+
+    function loadDepartmentTypes() {
+        console.log('Loading department types...');
+        $.ajax({
+            url: '@Url.Action("GetDepartmentTypes", "Admin")',
+            type: 'GET',
+            success: function(data) {
+                console.log('Department types loaded:', data);
+                var select = $('#newDepartmentTypeId');
+                if (select.length === 0) {
+                    console.error('Department type select element not found!');
+                    return;
+                }
+                select.empty();
+                select.append('<option value="">اختر نوع القسم</option>');
+                
+                $.each(data, function(index, item) {
+                    select.append('<option value="' + item.id + '">' + item.name + '</option>');
+                });
+            },
+            error: function() {
+                console.log('خطأ في تحميل أنواع الأقسام');
+                showDepartmentError('خطأ في تحميل أنواع الأقسام');
+            }
+        });
+    }
+
+    // Use event delegation for the save button since it's in a dynamically loaded modal
+    $(document).on('click', '#btnSaveDepartment', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Save Department button clicked');
+        var departmentTypeId = $('#newDepartmentTypeId').val();
+        var departmentName = $('#newDepartmentName').val().trim();
+
+        // Clear previous errors
+        hideDepartmentError();
+
+        // Validation
+        if (!departmentTypeId) {
+            showDepartmentError('يرجى اختيار نوع القسم');
+            $('#newDepartmentTypeId').addClass('is-invalid');
+            return;
+        } else {
+            $('#newDepartmentTypeId').removeClass('is-invalid');
+        }
+
+        if (!departmentName) {
+            showDepartmentError('يرجى إدخال اسم القسم');
+            $('#newDepartmentName').addClass('is-invalid');
+            return;
+        } else {
+            $('#newDepartmentName').removeClass('is-invalid');
+        }
+
+        // Disable button during save
+        var $btn = $(this);
+        var originalText = $btn.html();
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>جاري الحفظ...');
+
+        // Save department
+        $.ajax({
+            url: '@Url.Action("CreateDepartment", "Admin")',
+            type: 'POST',
+            data: {
+                DepartmentTypeId: departmentTypeId,
+                DepartmentName: departmentName
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('input[name="__RequestVerificationToken"]').val() || $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Close ONLY the add department modal, NOT the parent modal
+                    $('#addDepartmentModal').modal('hide');
+                    
+                    // Show success message
+                    toastr.success('تم إضافة القسم بنجاح');
+                    
+                    // Update the main department dropdown and department type
+                    updateDepartmentDropdown(response.departmentId, response.departmentName, departmentTypeId);
+                    
+                    // Clear form
+                    clearDepartmentForm();
+                    
+                    // Ensure parent modal remains functional
+                    setTimeout(function() {
+                        $('#userModal input, #userModal select, #userModal button').prop('disabled', false);
+                    }, 300);
+                } else {
+                    showDepartmentError(response.message || 'حدث خطأ أثناء حفظ القسم');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error saving department:', error);
+                showDepartmentError('حدث خطأ أثناء الاتصال بالخادم');
+            },
+            complete: function() {
+                // Re-enable button
+                $btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    function updateDepartmentDropdown(departmentId, departmentName, departmentTypeId) {
+        var departmentSelect = $('#DepartmentId');
+        
+        // Add new option
+        var newOption = '<option value="' + departmentId + '">' + departmentName + '</option>';
+        departmentSelect.append(newOption);
+        
+        // Select the new department
+        departmentSelect.val(departmentId);
+        
+        // Also update the Department Type dropdown
+        if (departmentTypeId) {
+            $('#DepartmentTypeId').val(departmentTypeId);
+            // Trigger change event to load departments for this type
+            $('#DepartmentTypeId').trigger('change');
+        }
+        
+        // Trigger change event
+        departmentSelect.trigger('change');
+    }
+
+    function clearDepartmentForm() {
+        $('#newDepartmentTypeId').val('').removeClass('is-invalid');
+        $('#newDepartmentName').val('').removeClass('is-invalid');
+        hideDepartmentError();
+    }
+
+    function showDepartmentError(message) {
+        $('#departmentErrorMessage').text(message);
+        $('#departmentError').show();
+    }
+
+    function hideDepartmentError() {
+        $('#departmentError').hide();
+    }
+
+    // Handle Cancel button click - only close the Add Department modal
+    $(document).on('click', '#btnCancelDepartment', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Cancel Department button clicked');
+        $('#addDepartmentModal').modal('hide');
+        
+        // Ensure the parent modal remains functional
+        setTimeout(function() {
+            // Re-enable any disabled elements in the parent modal
+            $('#userModal input, #userModal select, #userModal button').prop('disabled', false);
+            // Re-bind any necessary event handlers
+            $('#userModal').trigger('shown.bs.modal');
+        }, 300);
+    });
+
+    // Clear form when modal is hidden
+    $('#addDepartmentModal').on('hidden.bs.modal', function() {
+        clearDepartmentForm();
+        
+        // Ensure parent modal is still functional
+        setTimeout(function() {
+            // Re-enable any disabled elements in the parent modal
+            $('#userModal input, #userModal select, #userModal button').prop('disabled', false);
+        }, 100);
+    });
+</script>

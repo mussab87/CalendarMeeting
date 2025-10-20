@@ -1,0 +1,236 @@
+@model PaginatedResult<DepartmentDto>
+@{
+    ViewData["Title"] = "الأقسام";
+    ViewData["action"] = "GetDepartments";
+
+    ViewData["PageSize"] = Model.PageSize;
+    ViewData["SearchString"] = Model.SearchString;
+}
+
+<style>
+    .actions-cell {
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+    
+    .actions-buttons {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+    
+    .actions-buttons .btn {
+        margin: 0 !important;
+    }
+</style>
+
+<!--begin::Container-->
+<div class="container">
+
+    <!--begin::Card-->
+    <div class="card card-custom">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="card-icon">
+                    <i class="flaticon2-favourite text-primary"></i>
+                </span>
+                <h3 class="card-label">أقسام النظام</h3>
+            </div>
+            <div class="card-toolbar">
+                <!--begin::Button-->
+                <a id="addDepartmentButton" class="btn btn-primary font-weight-bolder">
+                    إضافة قسم
+                    <i class="la la-plus"></i>
+                </a>
+                <!-- Modal Container -->
+                <div class="modal fade" id="departmentModal" tabindex="-1" role="dialog" aria-labelledby="departmentModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div id="modalContent">
+                            <partial name="AddEditDepartment" model="@Model.DepartmentDto" />
+                        </div>
+
+                    </div>
+                </div>
+                &nbsp;
+                <!--begin::Dropdown-->
+                <div class="dropdown dropdown-inline mr-2">
+                    <button type="button" class="btn btn-light-primary font-weight-bolder dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        طباعة
+                        <i class="la la-download"></i>
+                    </button>
+                    <!--begin::Dropdown Menu-->
+                    <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+                        <ul class="nav flex-column nav-hover">
+                            <li class="nav-header font-weight-bolder text-uppercase text-primary pb-2">اختر من الاختيارات:</li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon la la-print"></i>
+                                    <span class="nav-text">Print</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon la la-copy"></i>
+                                    <span class="nav-text">Copy</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon la la-file-excel-o"></i>
+                                    <span class="nav-text">Excel</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon la la-file-text-o"></i>
+                                    <span class="nav-text">CSV</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon la la-file-pdf-o"></i>
+                                    <span class="nav-text">PDF</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--end::Dropdown Menu-->
+                </div>
+                <!--end::Dropdown-->
+            </div>
+        </div>
+        <div class="card-body" style="padding-top: 10px;">
+            <div class="text-center pb-2" id="errorDepartments" style="font-size: 16px; display: none;">
+                <div class="text-danger">
+                    <label id="error"></label>
+                </div>
+            </div>
+
+            <!--begin: Search-->
+            <partial name="_PagedListSearch" />
+            <!--end: Search-->
+            <!--begin: Grouped Table-->
+            @if (Model.Items.Any())
+            {
+                var groupedDepartments = Model.Items.GroupBy(d => d.DepartmentTypeName ?? "غير محدد").OrderBy(g => g.Key);
+                
+                @foreach (var departmentType in groupedDepartments)
+                {
+                    <div class="card card-custom mb-5">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="card-icon">
+                                    <i class="flaticon2-building text-primary"></i>
+                                </span>
+                                <h3 class="card-label">@departmentType.Key</h3>
+                                <span class="badge badge-primary badge-pill ml-2">@departmentType.Count()</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-bordered table-hover table-checkable mb-0">
+                                <thead class="thead-light">
+                                    <tr role="row">
+                                        <th>اسم القسم</th>
+                                        <th>وصف القسم</th>
+                                        <th>تاريخ الإنشاء</th>
+                                        <th>حالة الحذف</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var department in departmentType.OrderBy(d => d.Name))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <span class="font-weight-bold text-dark">@department.Name</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-muted">@(department.Description ?? "غير محدد")</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-muted">@(department.CreatedDate?.ToString("yyyy/MM/dd") ?? "غير محدد")</span>
+                                            </td>
+                                            <td>
+                                                @if (department.IsDeleted == true)
+                                                {
+                                                    <span style="width: 137px;">
+                                                        <span class="label font-weight-bold label-lg label-light-danger label-inline">
+                                                            <b>تم الحذف</b>
+                                                        </span>
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="width: 137px;">
+                                                        <span class="label label-success label-dot mr-2"></span>
+                                                        <span class="font-weight-bold text-success">
+                                                            <b>نشط</b>
+                                                        </span>
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="actions-cell">
+                                                <div class="actions-buttons">
+                                                    <div class="dropdown dropdown-inline">
+                                                        <a href="#" class="btn btn-sm btn-default btn-text-primary btn-hover-primary btn-icon" data-toggle="dropdown">
+                                                            <i class="la la-cog"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+                                                            <ul class="nav nav-hoverable flex-column" style="margin-right:-30px">
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="#">
+                                                                        <i class="nav-icon la la-print" style="margin-right: 10px;"></i>
+                                                                        <span class="nav-text">طباعة</span>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <a id="updateDepartmentButton" onclick="updateDepartmentButton('@department.Id')" class="btn btn-sm btn-default btn-text-primary btn-hover-primary btn-icon" title="تعديل القسم">
+                                                        <i class="la la-edit"></i>
+                                                    </a>
+                                                    @if (department.IsDeleted != true)
+                                                    {
+                                                        <a onclick="deleteDepartmentButton('@department.Id')" class="btn btn-sm btn-default btn-text-primary btn-hover-primary btn-icon" title="حذف القسم">
+                                                            <i class="la la-trash"></i>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="card card-custom">
+                    <div class="card-body text-center py-10">
+                        <div class="symbol symbol-100 symbol-light-warning mb-5">
+                            <span class="symbol-label">
+                                <i class="flaticon2-information text-warning"></i>
+                            </span>
+                        </div>
+                        <h3 class="text-dark font-weight-bolder mb-3">لا توجد أقسام</h3>
+                        <p class="text-muted font-weight-bold mb-5">لم يتم العثور على أي أقسام في النظام</p>
+                        <button type="button" class="btn btn-primary" id="addDepartmentButton">
+                            <i class="la la-plus"></i>
+                            إضافة قسم جديد
+                        </button>
+                    </div>
+                </div>
+            }
+            <!--end: Grouped Table-->
+
+            <partial name="_PagedListPagerPartial" model="Model" />
+        </div>
+
+    </div>
+
+    <!--end::Card-->
+</div>
+<!--end::Container-->

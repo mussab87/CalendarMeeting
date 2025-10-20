@@ -1,0 +1,683 @@
+@{
+    ViewData["Title"] = "التقويم والاجتماعات";
+}
+
+<!--begin::Container-->
+<div class="container">
+    <style>
+        /* Enhanced Calendar Styling */
+        #calendar {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Make calendar cells bigger with dynamic height */
+        .fc-daygrid-day {
+            min-height: 120px !important;
+            height: auto !important;
+        }
+
+        .fc-daygrid-day-frame {
+            min-height: 120px !important;
+            height: auto !important;
+        }
+
+        /* Dynamic height based on number of events */
+        .fc-daygrid-day[data-day-events="1"] {
+            min-height: 140px !important;
+        }
+
+        .fc-daygrid-day[data-day-events="2"] {
+            min-height: 180px !important;
+        }
+
+        .fc-daygrid-day[data-day-events="3"] {
+            min-height: 220px !important;
+        }
+
+        .fc-daygrid-day[data-day-events="4"] {
+            min-height: 260px !important;
+        }
+
+        .fc-daygrid-day[data-day-events="5"] {
+            min-height: 300px !important;
+        }
+
+        .fc-daygrid-day[data-day-events="6"] {
+            min-height: 340px !important;
+        }
+
+        .fc-daygrid-day[data-day-events="7"] {
+            min-height: 380px !important;
+        }
+
+        .fc-daygrid-day[data-day-events="8"] {
+            min-height: 420px !important;
+        }
+
+        .fc-daygrid-day[data-day-events="9"] {
+            min-height: 460px !important;
+        }
+
+        .fc-daygrid-day[data-day-events="10"] {
+            min-height: 500px !important;
+        }
+
+        /* Enhanced event display */
+        .fc-event {
+            border-radius: 8px !important;
+            margin: 3px 4px !important;
+            padding: 6px 8px !important;
+            font-size: 12px !important;
+            line-height: 1.4 !important;
+            word-wrap: break-word !important;
+            white-space: normal !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            min-height: 32px !important;
+            max-height: 80px !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+            transition: all 0.2s ease !important;
+            font-weight: 600 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+        }
+
+        /* Better event spacing for multiple events */
+        .fc-daygrid-day-events {
+            margin: 2px !important;
+        }
+
+        .fc-daygrid-event {
+            margin-bottom: 2px !important;
+        }
+
+        /* Event content styling */
+        .fc-event-main {
+            padding: 2px 0 !important;
+        }
+
+        .fc-event-title {
+            font-size: 12px !important;
+            line-height: 1.3 !important;
+            margin-bottom: 2px !important;
+        }
+
+        .fc-event-time {
+            font-size: 10px !important;
+            opacity: 0.9 !important;
+            font-weight: 500 !important;
+        }
+
+        /* Week and Day view specific styling */
+        .fc-timegrid-event {
+            border-radius: 6px !important;
+            margin: 1px 2px !important;
+            padding: 3px 6px !important;
+            font-size: 12px !important;
+            line-height: 1.3 !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+            font-weight: 600 !important;
+            min-height: 20px !important;
+        }
+
+            .fc-timegrid-event .fc-event-main {
+                padding: 2px 4px !important;
+            }
+
+            .fc-timegrid-event .fc-event-title {
+                font-size: 12px !important;
+                font-weight: 600 !important;
+                line-height: 1.2 !important;
+            }
+
+            .fc-timegrid-event .fc-event-time {
+                font-size: 10px !important;
+                opacity: 0.9 !important;
+                font-weight: 500 !important;
+            }
+
+        .fc-event-title {
+            font-weight: 600 !important;
+            font-size: 11px !important;
+            line-height: 1.2 !important;
+        }
+
+        .fc-event-time {
+            font-size: 10px !important;
+            opacity: 0.9 !important;
+            font-weight: 500 !important;
+        }
+
+        /* Better day number display */
+        .fc-daygrid-day-number {
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            padding: 4px !important;
+        }
+
+        /* Hover effects */
+        .fc-event:hover {
+            opacity: 0.8 !important;
+            cursor: pointer !important;
+            transform: scale(1.02) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        /* Priority color coding */
+        .fc-event[data-priority="high"] {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+        }
+
+        .fc-event[data-priority="medium"] {
+            background-color: #ffc107 !important;
+            border-color: #ffc107 !important;
+            color: #000 !important;
+        }
+
+        .fc-event[data-priority="low"] {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+        }
+
+        /* Responsive adjustments */
+        @@media (max-width: 768px) {
+            .fc-daygrid-day {
+                min-height: 80px !important;
+                height: 80px !important;
+            }
+
+            .fc-daygrid-day-frame {
+                min-height: 80px !important;
+                height: 80px !important;
+            }
+
+            .fc-event {
+                font-size: 10px !important;
+                max-height: 40px !important;
+            }
+        }
+
+        /* Enhanced Tooltip styling */
+        .tooltip {
+            font-size: 13px !important;
+            max-width: 320px !important;
+            z-index: 9999 !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        }
+
+        .tooltip-inner {
+            text-align: right !important;
+            direction: rtl !important;
+            white-space: pre-line !important;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+            border-radius: 8px !important;
+            padding: 12px 16px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #ecf0f1 !important;
+            line-height: 1.5 !important;
+            font-weight: 500 !important;
+        }
+
+        /* Priority-based tooltip colors */
+        .tooltip-priority-high .tooltip-inner {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .tooltip-priority-medium .tooltip-inner {
+            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+        }
+
+        .tooltip-priority-low .tooltip-inner {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #2c3e50 !important;
+        }
+
+        .tooltip.bs-tooltip-top .tooltip-arrow::before {
+            border-top-color: #2c3e50 !important;
+        }
+
+        .tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+            border-bottom-color: #2c3e50 !important;
+        }
+
+        .tooltip.bs-tooltip-start .tooltip-arrow::before {
+            border-left-color: #2c3e50 !important;
+        }
+
+        .tooltip.bs-tooltip-end .tooltip-arrow::before {
+            border-right-color: #2c3e50 !important;
+        }
+
+        /* Priority-specific arrow colors */
+        .tooltip-priority-high.bs-tooltip-top .tooltip-arrow::before {
+            border-top-color: #e74c3c !important;
+        }
+
+        .tooltip-priority-high.bs-tooltip-bottom .tooltip-arrow::before {
+            border-bottom-color: #e74c3c !important;
+        }
+
+        .tooltip-priority-high.bs-tooltip-start .tooltip-arrow::before {
+            border-left-color: #e74c3c !important;
+        }
+
+        .tooltip-priority-high.bs-tooltip-end .tooltip-arrow::before {
+            border-right-color: #e74c3c !important;
+        }
+
+        .tooltip-priority-medium.bs-tooltip-top .tooltip-arrow::before {
+            border-top-color: #c0392b !important;
+        }
+
+        .tooltip-priority-medium.bs-tooltip-bottom .tooltip-arrow::before {
+            border-bottom-color: #c0392b !important;
+        }
+
+        .tooltip-priority-medium.bs-tooltip-start .tooltip-arrow::before {
+            border-left-color: #c0392b !important;
+        }
+
+        .tooltip-priority-medium.bs-tooltip-end .tooltip-arrow::before {
+            border-right-color: #c0392b !important;
+        }
+
+        .tooltip-priority-low.bs-tooltip-top .tooltip-arrow::before {
+            border-top-color: #f39c12 !important;
+        }
+
+        .tooltip-priority-low.bs-tooltip-bottom .tooltip-arrow::before {
+            border-bottom-color: #f39c12 !important;
+        }
+
+        .tooltip-priority-low.bs-tooltip-start .tooltip-arrow::before {
+            border-left-color: #f39c12 !important;
+        }
+
+        .tooltip-priority-low.bs-tooltip-end .tooltip-arrow::before {
+            border-right-color: #f39c12 !important;
+        }
+    </style>
+    <div class="card card-custom">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="card-icon">
+                    <i class="flaticon2-favourite text-primary"></i>
+                </span>
+                <h3 class="card-label">
+                    نظام التقويم والاجتماعات
+                </h3>
+            </div>
+
+            <!--begin::Print Section-->
+            <div class="row align-items-center mt-3">
+                <div class="col-md-4">
+                    <label class="font-weight-bold mb-2" style="color: #29504D; font-size: 14px;">من تاريخ</label>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" style="background: #f8f9fa; border-color: #dee2e6; border-radius: 6px 0 0 6px;">
+                                <i class="fas fa-calendar-alt text-muted" style="font-size: 12px;"></i>
+                            </span>
+                        </div>
+                        <input type="date" id="printFromDate" class="form-control form-control-sm" style="border-color: #dee2e6; border-radius: 0 6px 6px 0; font-size: 13px;">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="font-weight-bold mb-2" style="color: #29504D; font-size: 14px;">إلى تاريخ</label>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" style="background: #f8f9fa; border-color: #dee2e6; border-radius: 6px 0 0 6px;">
+                                <i class="fas fa-calendar-alt text-muted" style="font-size: 12px;"></i>
+                            </span>
+                        </div>
+                        <input type="date" id="printToDate" class="form-control form-control-sm" style="border-color: #dee2e6; border-radius: 0 6px 6px 0; font-size: 13px;">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="font-weight-bold mb-2" style="color: #29504D; font-size: 14px;"></label>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button type="button" id="printCalendarBtn" class="btn btn-primary btn-sm btn-block font-weight-bold" style="background: #29504D; border-color: #29504D; border-radius: 6px; padding: 8px 16px; font-size: 13px; box-shadow: 0 2px 8px rgba(41, 80, 77, 0.3);">
+                                <i class="fas fa-print mr-1"></i>طباعة
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-3">
+                </div>
+            </div>
+            <!--end::Print Section-->
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <main role="main" class="pb-3">
+                                <div class="container-fluid mt-4">
+                                    <div class="row">
+                                        <div class="col-md-3 mb-4">
+                                            <div class="card">
+                                                <div class="card-header bg-primary text-white">
+                                                    <h5 class="mb-0">القائمة الرئيسية</h5>
+                                                </div>
+                                                <div class="list-group list-group-flush">
+                                                    <a href="@Url.Action("Today", "Calendar")" class="list-group-item list-group-item-action">
+                                                        <i class="fas fa-calendar-day"></i> اجتماعات اليوم
+                                                    </a>
+                                                    <a href="@Url.Action("Meetings", "Calendar")" class="list-group-item list-group-item-action">
+                                                        <i class="fas fa-calendar-alt"></i> جميع الاجتماعات
+                                                    </a>
+                                                    @if (signInManager.IsSignedIn(User) && (signInManager.Context.User.IsInRole(Roles.SuperAdmin)
+                                                                                                        || signInManager.Context.User.IsInRole(Roles.Admin)
+                                                                                                        || signInManager.Context.User.IsInRole(Roles.OfficeManager)
+                                                                                                        //|| signInManager.Context.User.IsInRole(Roles.Leader)
+                                                                                                        ))
+                                                    {
+                                                        <a href="@Url.Action("Create", "Calendar")" class="list-group-item list-group-item-action">
+                                                            <i class="fas fa-plus-circle"></i> إنشاء اجتماع جديد
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-9">
+                                            <div class="card">
+                                                <div class="card-header bg-info text-white">
+                                                    <h5 class="mb-0">التقويم الشهري</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div id="calendar"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+    <!--end::Card-->
+</div>
+<!--end::Container-->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'ar',
+            direction: 'rtl',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            buttonText: {
+                today: 'اليوم',
+                month: 'شهر',
+                week: 'أسبوع',
+                day: 'يوم'
+            },
+            events: '/api/meetings',
+            eventClick: function(info) {
+                window.location.href = '/Calendar/Details/' + info.event.id;
+            },
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            },
+            // Enhanced event display
+            eventDisplay: 'block',
+            eventTextColor: '#ffffff',
+            // Remove default colors - will be set dynamically based on priority
+            // eventBackgroundColor: '#007bff',
+            // eventBorderColor: '#0056b3',
+            // Enhanced event rendering for all views
+            eventDidMount: function(info) {
+                // Debug: Log the priority information
+                console.log('Event:', info.event.title, 'Priority:', info.event.extendedProps.priority, 'View:', info.view.type);
+
+                // Determine priority level and colors
+                var priority = info.event.extendedProps.priority;
+                var priorityLevel = 'low';
+                var backgroundColor = '#27ae60'; // Default green for low priority
+                var borderColor = '#229954';
+
+                if (priority) {
+                    console.log('Processing priority:', priority);
+                    if (priority === 'عالي') {
+                        priorityLevel = 'high';
+                        backgroundColor = '#e74c3c'; // Red for high priority (from database)
+                        borderColor = '#c0392b';
+                        console.log('Set to HIGH priority - Red');
+                    } else if (priority === 'متوسط') {
+                        priorityLevel = 'medium';
+                        backgroundColor = '#c0392b'; // Dark Red for medium priority (from database)
+                        borderColor = '#a93226';
+                        console.log('Set to MEDIUM priority - Dark Red');
+                    } else if (priority === 'منخفض') {
+                        priorityLevel = 'low';
+                        backgroundColor = '#f39c12'; // Orange for low priority (from database)
+                        borderColor = '#e67e22';
+                        console.log('Set to LOW priority - Orange');
+                    } else {
+                        priorityLevel = 'low';
+                        backgroundColor = '#27ae60'; // Default green for unknown priority
+                        borderColor = '#229954';
+                        console.log('Unknown priority, using default GREEN');
+                    }
+                } else {
+                    console.log('No priority found, using default LOW');
+                }
+
+                // Apply priority styling for all views
+                info.el.setAttribute('data-priority', priorityLevel);
+                info.el.style.backgroundColor = backgroundColor;
+                info.el.style.borderColor = borderColor;
+                info.el.style.borderWidth = '2px';
+                info.el.style.borderStyle = 'solid';
+
+                // Enhanced styling for different view types
+                if (info.view.type === 'timeGridWeek' || info.view.type === 'timeGridDay') {
+                    // For week and day views, make events more prominent
+                    info.el.style.borderRadius = '6px';
+                    info.el.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.15)';
+                    info.el.style.fontWeight = '600';
+                    info.el.style.fontSize = '12px';
+                }
+
+                // Add enhanced tooltip with priority class
+                info.el.setAttribute('title', info.event.extendedProps.fullDetails || info.event.title);
+                info.el.setAttribute('data-bs-toggle', 'tooltip');
+                info.el.setAttribute('data-bs-placement', 'auto');
+                info.el.setAttribute('data-bs-trigger', 'hover focus');
+                info.el.setAttribute('data-bs-delay', '{"show": 300, "hide": 100}');
+                info.el.setAttribute('data-priority-class', 'tooltip-priority-' + priorityLevel);
+
+                // Make event text more readable
+                var eventText = info.el.querySelector('.fc-event-title');
+                if (eventText) {
+                    eventText.style.fontSize = '12px';
+                    eventText.style.fontWeight = 'bold';
+                    eventText.style.lineHeight = '1.2';
+                    eventText.style.whiteSpace = 'normal';
+                    eventText.style.wordBreak = 'break-word';
+                }
+
+                // Add time display
+                var timeElement = info.el.querySelector('.fc-event-time');
+                if (timeElement) {
+                    timeElement.style.fontSize = '10px';
+                    timeElement.style.opacity = '0.9';
+                }
+
+                // Add meeting type indicator
+                var meetingType = info.event.extendedProps.meetingType;
+                if (meetingType) {
+                    var typeIndicator = document.createElement('span');
+                    typeIndicator.style.fontSize = '8px';
+                    typeIndicator.style.opacity = '0.7';
+                    typeIndicator.style.marginLeft = '2px';
+                    typeIndicator.textContent = meetingType === 'داخلي' ? 'د' : 'خ'; // د for داخلي, خ for خارجي
+                    info.el.appendChild(typeIndicator);
+                }
+            },
+            // Better day cell display
+            dayCellContent: function(info) {
+                info.dayNumberText = info.dayNumberText.replace(/^0+/, '');
+                return { html: '<span class="fc-daygrid-day-number">' + info.dayNumberText + '</span>' };
+            },
+            // Improve event rendering
+            dayMaxEvents: 3, // Show max 3 events per day, then show "+X more"
+            moreLinkClick: 'popover', // Show popover when clicking "+X more"
+            eventMaxStack: 2, // Stack events vertically when multiple on same day
+            height: 'auto', // Auto height to accommodate content
+            contentHeight: 'auto',
+
+            // Handle view changes
+            viewDidMount: function(info) {
+                console.log('View changed to:', info.view.type);
+
+                // Set dynamic heights based on number of events per day
+                if (info.view.type === 'dayGridMonth') {
+                    setTimeout(function() {
+                        var dayCells = document.querySelectorAll('.fc-daygrid-day');
+                        dayCells.forEach(function(dayCell) {
+                            var eventCount = dayCell.querySelectorAll('.fc-event').length;
+                            if (eventCount > 0) {
+                                dayCell.setAttribute('data-day-events', eventCount);
+                            }
+                        });
+                    }, 100);
+                }
+
+                // Reinitialize tooltips after view change
+                setTimeout(function() {
+                    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        // Destroy existing tooltip if it exists
+                        var existingTooltip = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
+                        if (existingTooltip) {
+                            existingTooltip.dispose();
+                        }
+
+                        return new bootstrap.Tooltip(tooltipTriggerEl, {
+                            placement: 'auto',
+                            trigger: 'hover focus',
+                            delay: { show: 300, hide: 100 },
+                            container: 'body',
+                            boundary: 'viewport',
+                            customClass: tooltipTriggerEl.getAttribute('data-priority-class') || ''
+                        });
+                    });
+                }, 200);
+            }
+        });
+
+        calendar.render();
+
+        // Set dynamic heights after calendar renders
+        setTimeout(function() {
+            var dayCells = document.querySelectorAll('.fc-daygrid-day');
+            dayCells.forEach(function(dayCell) {
+                var eventCount = dayCell.querySelectorAll('.fc-event').length;
+                if (eventCount > 0) {
+                    dayCell.setAttribute('data-day-events', eventCount);
+                }
+            });
+        }, 300);
+
+        // Initialize tooltips after calendar renders
+        setTimeout(function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                var tooltip = new bootstrap.Tooltip(tooltipTriggerEl, {
+                    placement: 'auto',
+                    trigger: 'hover focus',
+                    delay: { show: 300, hide: 100 },
+                    container: 'body',
+                    boundary: 'viewport',
+                    customClass: tooltipTriggerEl.getAttribute('data-priority-class') || ''
+                });
+
+                // Apply priority class to tooltip element when it's shown
+                tooltipTriggerEl.addEventListener('show.bs.tooltip', function() {
+                    var priorityClass = this.getAttribute('data-priority-class');
+                    if (priorityClass) {
+                        var tooltipElement = document.querySelector('.tooltip');
+                        if (tooltipElement) {
+                            tooltipElement.classList.add(priorityClass);
+                        }
+                    }
+                });
+
+                return tooltip;
+            });
+        }, 500);
+    });
+
+    // Print Calendar Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set default dates (current month)
+        const today = new Date();
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        document.getElementById('printFromDate').value = firstDay.toISOString().split('T')[0];
+        document.getElementById('printToDate').value = lastDay.toISOString().split('T')[0];
+
+        // Print button click handler
+        document.getElementById('printCalendarBtn').addEventListener('click', function() {
+            const fromDate = document.getElementById('printFromDate').value;
+            const toDate = document.getElementById('printToDate').value;
+
+            if (!fromDate || !toDate) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('يرجى اختيار تاريخ البداية والنهاية');
+                } else {
+                    alert('يرجى اختيار تاريخ البداية والنهاية');
+                }
+                return;
+            }
+
+            if (new Date(fromDate) > new Date(toDate)) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('تاريخ البداية يجب أن يكون قبل تاريخ النهاية');
+                } else {
+                    alert('تاريخ البداية يجب أن يكون قبل تاريخ النهاية');
+                }
+                return;
+            }
+
+            // Show loading
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>جاري التحميل...';
+
+            // Open print window
+            const printUrl = `@Url.Action("PrintCalendar", "Calendar")?fromDate=${fromDate}&toDate=${toDate}`;
+            const printWindow = window.open(printUrl, '_blank', 'width=800,height=600');
+
+            // Reset button after a delay
+            setTimeout(() => {
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-print mr-1"></i>طباعة';
+            }, 2000);
+        });
+    });
+</script>

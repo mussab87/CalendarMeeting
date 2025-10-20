@@ -1,0 +1,88 @@
+﻿@model LoginDto
+@{
+    ViewData["Title"] = "تسجيل الدخول";
+    Layout = "_LoginLayout";
+}
+
+<div class="split-container">
+    <div class="split-left">
+        <div class="logo-anim">
+            <img src="assets/media/MOD/Mod-logo.png" alt="Mod Logo" width="300" />
+        </div>
+        <div class="logo-title">مرحباً بك!</div>
+        <div class="system-name-container">
+            <div class="system-name">منصة إدارة الإجتماعات</div>
+        </div>
+    </div>
+    <div class="divider"></div>
+    <div class="split-right fade-slide-in" id="loginForm">
+        <form asp-controller="Account" asp-action="Login" method="post" autocomplete="off">
+            <!-- important: emits the __RequestVerificationToken hidden input -->
+            @Html.AntiForgeryToken()
+            <div class="login-title">تسجيل الدخول</div>
+            <div class="login-desc">فضلا أدخل اسم المستخدم وكلمة المرور</div>
+            <div class="form-floating">
+                <input asp-for="Username" class="form-control" type="text" id="Username" placeholder=" " autocomplete="off" />
+                <label for="Username">اسم المستخدم</label>
+                @*  <span class="input-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" /></svg>
+                </span> *@
+                <span asp-validation-for="Username" class="alert-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Password" class="form-control" type="password" id="Password" placeholder=" " autocomplete="off" />
+                <label for="Password">كلمة المرور</label>
+                @*  <span class="input-icon">
+                    <svg viewBox="0 0 24 24"><path d="M17 8V7a5 5 0 0 0-10 0v1a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-8-1a3 3 0 0 1 6 0v1h-6V7zm10 11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8z" /></svg>
+                </span> *@
+                <span asp-validation-for="Password" class="alert-danger"></span>
+            </div>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label class="font-size-h6 font-weight-bolder text-primary" style="display:block; text-align:right;">رمز التحقق</label>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <a href="javascript:void(0);" onclick="reloadCaptcha()" tabindex="-1" style="background: none; border: none; cursor: pointer; padding: 0; margin-left: 0.3rem;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#29504D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.51 7.13M3 19a9 9 0 0 0 14.36 1.36"></path></svg>
+                    </a>
+                    <img src="@Url.Action("Captcha", "Account")" id="captchaImage" alt="رمز التحقق" style="height: 38px; border-radius: 10px; border: 1.5px solid #ccc; background: #fafafa;" />
+                </div>
+            </div>
+            <div class="form-floating">
+                <input asp-for="CaptchaInput" class="form-control" type="text" id="CaptchaCode" placeholder=" " autocomplete="off" />
+                <label for="CaptchaCode">أدخل رمز التحقق</label>
+                <span asp-validation-for="CaptchaInput" class="alert-danger"></span>
+                @* <span class="alert-danger" style="font-size: 16px">
+                    @Html.ValidationMessage("captchaError")
+                </span> *@
+            </div>
+            @*  <span class="alert-danger" style="font-size: 16px">
+                @Html.ValidationSummary()
+            </span> *@
+
+            @* <div class="text-end pt-2">
+                <a href="#" class="forgot-link">نسيت كلمة المرور ؟</a>
+            </div> *@
+            <div class="text-center pt-2">
+                <button type="submit" class="btn" id="loginBtn">تسجيل الدخول</button>
+            </div>
+            <div class="text-center pt-2">
+                <button type="button" id="showTerms" class="btn btn-outline">الشروط والأحكام</button>
+            </div>
+        </form>
+
+    </div>
+    <div class="split-right card hide" id="termsContent" style="box-shadow:none;">
+        <div class="title">
+            <h2>الشروط والأحكام</h2>
+            <p>من هنا يتم شرح آلية الاستخدام والبنود.</p>
+        </div>
+        <ul>
+            <li>باستخدامك لهذا الموقع/التطبيق، فإنك توافق على الالتزام بهذه الشروط والأحكام بالكامل.</li>
+            <li>يجب ألا تستخدم هذا الموقع/التطبيق لأي غرض غير قانوني أو ينتهك القوانين المعمول بها.</li>
+            <li>يحتفظ مزود الخدمة بالحق في تعديل أو تحديث الشروط في أي وقت دون إشعار مسبق.</li>
+            <li>أنت مسؤول عن الحفاظ على سرية بيانات الدخول الخاصة بك وعدم مشاركتها مع أي طرف ثالث.</li>
+            <li>قد يتم تعليق أو إنهاء حسابك في حال انتهاك أي من الشروط المذكورة.</li>
+        </ul>
+        <button type="button" class="btn" id="backToLogin">العودة لتسجيل الدخول</button>
+    </div>
+</div>
+

@@ -1,0 +1,612 @@
+@model App.Web.Models.PrintCalendarViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "طباعة التقويم والاجتماعات";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="~/css/font-awesome-6.0.0.min.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* Font Awesome Icons */
+        .fas, .far, .fab, .fa {
+            font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", FontAwesome !important;
+            font-weight: 900 !important;
+            font-style: normal !important;
+            display: inline-block !important;
+        }
+
+        .far {
+            font-weight: 400 !important;
+        }
+
+        .print-container {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20mm;
+            background: white;
+        }
+
+        /* Header Styles */
+        .print-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #29504D 0%, #3a6b66 100%);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(41, 80, 77, 0.3);
+        }
+
+        .company-logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #29504D;
+            font-weight: bold;
+            overflow: hidden;
+        }
+        
+        .company-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .company-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .company-address {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .print-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-right: 5px solid #29504D;
+        }
+
+        .print-info h2 {
+            color: #29504D;
+            font-size: 24px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            text-align: right;
+        }
+
+        .print-info h2 i {
+            margin-left: 10px;
+            font-size: 20px;
+            font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", FontAwesome;
+            font-weight: 900;
+            font-style: normal;
+            display: inline-block;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            text-align: right;
+        }
+
+        .info-item i {
+            color: #29504D;
+            margin-left: 8px;
+            width: 20px;
+        }
+
+        .info-item strong {
+            color: #29504D;
+            margin-left: 5px;
+        }
+        
+        .info-item span {
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Calendar Grid */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            direction: rtl;
+        }
+
+        .calendar-header {
+            background: #29504D;
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            direction: rtl;
+        }
+
+        .calendar-day {
+            background: white;
+            min-height: 120px;
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            position: relative;
+            text-align: right;
+            direction: rtl;
+        }
+
+        .calendar-day.other-month {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .day-number {
+            font-weight: bold;
+            font-size: 16px;
+            color: #29504D;
+            margin-bottom: 8px;
+            text-align: right;
+        }
+
+        .meeting-item {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: right;
+            direction: rtl;
+        }
+
+        .meeting-item:hover {
+            background: #bbdefb;
+            transform: translateY(-1px);
+        }
+
+        .meeting-time {
+            font-weight: bold;
+            color: #1976d2;
+            text-align: right;
+        }
+
+        .meeting-title {
+            color: #333;
+            font-weight: 500;
+            margin-top: 2px;
+            text-align: right;
+        }
+
+        .meeting-location {
+            color: #666;
+            font-size: 11px;
+            margin-top: 2px;
+            text-align: right;
+        }
+
+        /* Meetings List */
+        .meetings-list {
+            margin-top: 30px;
+        }
+
+        .meetings-list h3 {
+            color: #29504D;
+            font-size: 22px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #29504D;
+            display: flex;
+            align-items: center;
+            text-align: right;
+        }
+
+        .meetings-list h3 i {
+            margin-left: 10px;
+            font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", FontAwesome;
+            font-weight: 900;
+            font-style: normal;
+            display: inline-block;
+        }
+
+        .meeting-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .meeting-card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .meeting-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .meeting-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #29504D;
+            margin-bottom: 8px;
+            text-align: right;
+        }
+
+        .meeting-datetime {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #666;
+            display: inline-block;
+        }
+
+        .meeting-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            text-align: right;
+        }
+
+        .detail-item i {
+            color: #29504D;
+            margin-left: 8px;
+            width: 20px;
+            font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", FontAwesome;
+            font-weight: 900;
+            font-style: normal;
+            display: inline-block;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #666;
+            margin-left: 5px;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .participants-list {
+            margin-top: 10px;
+        }
+
+        .participant-tag {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin: 2px;
+        }
+
+        .priority-high {
+            border-right: 4px solid #f44336;
+        }
+
+        .priority-medium {
+            border-right: 4px solid #ff9800;
+        }
+
+        .priority-low {
+            border-right: 4px solid #4caf50;
+        }
+
+        /* Print Styles */
+        @@media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .print-container {
+                padding: 0;
+                max-width: none;
+            }
+            
+            .meeting-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            
+            .calendar-day {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Footer */
+        .print-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="print-container">
+        <!-- Header -->
+        <div class="print-header">
+            <div class="company-logo">
+                <img src="/assets/media/MOD/Mod-logo.png" alt="Company Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <i class="fas fa-calendar-alt" style="display: none;"></i>
+            </div>
+            <div class="company-name">@Model.CompanyName</div>
+            <div class="company-address">@Model.CompanyAddress</div>
+        </div>
+
+        <!-- Print Info -->
+        <div class="print-info">
+            <h2><i class="fas fa-print"></i>تقرير الاجتماعات</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-user"></i>
+                        <strong>المستخدم:</strong>
+                    </div>
+                    <span>@Model.UserName</span>
+                </div>
+                <div class="info-item">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-calendar"></i>
+                        <strong>من تاريخ:</strong>
+                    </div>
+                    <span>@Model.FromDate.ToString("yyyy/MM/dd")</span>
+                </div>
+                <div class="info-item">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-calendar"></i>
+                        <strong>إلى تاريخ:</strong>
+                    </div>
+                    <span>@Model.ToDate.ToString("yyyy/MM/dd")</span>
+                </div>
+                <div class="info-item">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-clock"></i>
+                        <strong>تاريخ الطباعة:</strong>
+                    </div>
+                    <span>@Model.PrintDate.ToString("yyyy/MM/dd HH:mm")</span>
+                </div>
+                <div class="info-item">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-list"></i>
+                        <strong>عدد الاجتماعات:</strong>
+                    </div>
+                    <span>@Model.Meetings.Count</span>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.Meetings.Any())
+        {
+            <!-- Calendar View -->
+            <div class="calendar-grid">
+                <div class="calendar-header">الأحد</div>
+                <div class="calendar-header">الاثنين</div>
+                <div class="calendar-header">الثلاثاء</div>
+                <div class="calendar-header">الأربعاء</div>
+                <div class="calendar-header">الخميس</div>
+                <div class="calendar-header">الجمعة</div>
+                <div class="calendar-header">السبت</div>
+
+                @{
+                    var startDate = Model.FromDate;
+                    var endDate = Model.ToDate;
+                    var currentDate = startDate;
+                    var dayOfWeek = (int)currentDate.DayOfWeek;
+                    var adjustedDayOfWeek = (dayOfWeek + 6) % 7; // Convert to Arabic week (Sunday = 0)
+                    
+                    // Add empty cells for days before the start date
+                    for (int i = 0; i < adjustedDayOfWeek; i++)
+                    {
+                        <div class="calendar-day other-month"></div>
+                    }
+                    
+                    // Add days in the range
+                    while (currentDate <= endDate)
+                    {
+                        var dayMeetings = Model.Meetings.Where(m => m.StartTime.Date == currentDate.Date).ToList();
+                        
+                        <div class="calendar-day">
+                            <div class="day-number">@currentDate.Day</div>
+                            @foreach (var meeting in dayMeetings.Take(3))
+                            {
+                                <div class="meeting-item priority-@(meeting.Priority?.ToLower() ?? "low")">
+                                    <div class="meeting-time">@meeting.StartTime.ToString("HH:mm")</div>
+                                    <div class="meeting-title">@meeting.Title</div>
+                                    @if (!string.IsNullOrEmpty(meeting.Location))
+                                    {
+                                        <div class="meeting-location">@meeting.Location</div>
+                                    }
+                                </div>
+                            }
+                            @if (dayMeetings.Count > 3)
+                            {
+                                <div class="meeting-item" style="background: #ffeb3b; color: #f57f17;">
+                                    +@(dayMeetings.Count - 3) اجتماعات أخرى
+                                </div>
+                            }
+                        </div>
+                        
+                        currentDate = currentDate.AddDays(1);
+                    }
+                }
+            </div>
+
+            <!-- Detailed Meetings List -->
+            <div class="meetings-list">
+                <h3><i class="fas fa-list-alt"></i>تفاصيل الاجتماعات</h3>
+                
+                @foreach (var meeting in Model.Meetings.OrderBy(m => m.StartTime))
+                {
+                    <div class="meeting-card priority-@(meeting.Priority?.ToLower() ?? "low")">
+                        <div class="meeting-header">
+                            <div>
+                                <div class="meeting-title">@meeting.Title</div>
+                                <div class="meeting-datetime">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    @meeting.StartTime.ToString("yyyy/MM/dd") - 
+                                    <i class="fas fa-clock"></i>
+                                    @meeting.StartTime.ToString("HH:mm") - @meeting.EndTime.ToString("HH:mm")
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="meeting-details">
+                            @if (!string.IsNullOrEmpty(meeting.Description))
+                            {
+                                <div class="detail-item">
+                                    <i class="fas fa-align-right"></i>
+                                    <span class="detail-label">الوصف:</span>
+                                    <span class="detail-value">@meeting.Description</span>
+                                </div>
+                            }
+                            
+                            @if (!string.IsNullOrEmpty(meeting.Location))
+                            {
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span class="detail-label">المكان:</span>
+                                    <span class="detail-value">@meeting.Location</span>
+                                </div>
+                            }
+                            
+                            @if (!string.IsNullOrEmpty(meeting.OrganizerName))
+                            {
+                                <div class="detail-item">
+                                    <i class="fas fa-user-tie"></i>
+                                    <span class="detail-label">منظم الاجتماع:</span>
+                                    <span class="detail-value">@meeting.OrganizerName</span>
+                                </div>
+                            }
+                            
+                            @if (!string.IsNullOrEmpty(meeting.Priority))
+                            {
+                                <div class="detail-item">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <span class="detail-label">الأولوية:</span>
+                                    <span class="detail-value">@meeting.Priority</span>
+                                </div>
+                            }
+                            
+                            @if (!string.IsNullOrEmpty(meeting.Status))
+                            {
+                                <div class="detail-item">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span class="detail-label">الحالة:</span>
+                                    <span class="detail-value">@meeting.Status</span>
+                                </div>
+                            }
+                        </div>
+                        
+                        @if (meeting.Participants?.Any() == true)
+                        {
+                            <div class="participants-list">
+                                <div class="detail-item">
+                                    <i class="fas fa-users"></i>
+                                    <span class="detail-label">المشاركون:</span>
+                                </div>
+                                @foreach (var participant in meeting.Participants)
+                                {
+                                    <span class="participant-tag">@(participant.Name ?? participant.UserName)</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-calendar-times" style="font-size: 48px; color: #6c757d; margin-bottom: 20px;"></i>
+                <h3 style="color: #6c757d;">لا توجد اجتماعات في الفترة المحددة</h3>
+                <p style="color: #6c757d;">لم يتم العثور على أي اجتماعات بين @Model.FromDate.ToString("yyyy/MM/dd") و @Model.ToDate.ToString("yyyy/MM/dd")</p>
+            </div>
+        }
+
+        <!-- Footer -->
+        <div class="print-footer">
+            <p>تم إنشاء هذا التقرير بواسطة نظام إدارة الاجتماعات</p>
+            <p>تاريخ الطباعة: @Model.PrintDate.ToString("yyyy/MM/dd HH:mm")</p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-print when page loads
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

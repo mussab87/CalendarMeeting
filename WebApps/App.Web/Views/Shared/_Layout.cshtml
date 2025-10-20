@@ -1,0 +1,490 @@
+﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
+@{
+    var tokens = antiforgery.GetAndStoreTokens(Context); // stores cookie + gives request token
+}
+@if (!User.Identity.IsAuthenticated)
+{
+    <script>
+        window.location.href = '@Url.Action("Login", "Account", new { area = "", returnUrl = Context.Request.Path })';
+    </script>
+}
+
+@{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var email = User.FindFirstValue(ClaimTypes.Email);
+    var userName = User.FindFirstValue(ClaimTypes.Name);
+    var fullName = HttpContextAccessor.HttpContext.Session.GetString("name") ?? "";
+    // var lastName = HttpContextAccessor.HttpContext.Session.GetString("lastName");
+
+}
+
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<!--begin::Head-->
+<head>
+    <script>
+        // make token and header name globally available
+        window.AntiForgeryToken = '@tokens.RequestToken';
+        window.AntiForgeryHeaderName = 'X-CSRF-TOKEN'; // must match options.HeaderName
+    </script>
+
+    <partial name="_HeadPartial" />
+
+    <script>
+        // optional: globally attach header to jQuery AJAX requests
+        if (window.jQuery && window.AntiForgeryToken) {
+            $.ajaxSetup({
+                headers: {
+                    [window.AntiForgeryHeaderName]: window.AntiForgeryToken
+                }
+            });
+            console.log("AjaxSetup added header:", window.AntiForgeryHeaderName);
+        }
+    </script>
+</head>
+
+<!--end::Head-->
+
+<script>
+    // Make the token available to all scripts
+    window.AntiForgeryToken = '@tokens.RequestToken';
+</script>
+<!--begin::Body-->
+<body class="quick-panel-right demo-panel-right offcanvas-right header-fixed subheader-enabled page-loading"
+      id="kt_body"
+      style="background-image: url(assets/media/bg/bg-10.png)">
+    <!--begin::Sticky Toolbar-->
+    <ul class="sticky-toolbar nav flex-column pl-2 pr-2 pt-3 pb-3 mt-4">
+        <!--begin::Item-->
+        <!-- <li class="nav-item mb-2" data-placement="right" data-toggle="tooltip" id="kt_demo_panel_toggle" title="" data-original-title="Check out more demos">
+            <a class="btn btn-sm btn-icon btn-bg-light btn-icon-success btn-hover-success" href="#">
+                <i class="flaticon2-drop"></i>
+            </a>
+        </li> -->
+        <!--end::Item-->
+        <!--begin::Item-->
+        <li class="nav-item mb-2" data-placement="left" data-toggle="tooltip" title="" data-original-title="Layout Builder">
+            <a class="btn btn-sm btn-icon btn-bg-light btn-icon-primary btn-hover-primary" href="#" target="_blank">
+                <i class="flaticon2-gear"></i>
+            </a>
+        </li>
+        <!--end::Item-->
+        <!--begin::Item-->
+        <li class="nav-item mb-2" data-placement="left" data-toggle="tooltip" title="" data-original-title="Documentation">
+            <a class="btn btn-sm btn-icon btn-bg-light btn-icon-warning btn-hover-warning" href="#" target="_blank">
+                <i class="flaticon2-telegram-logo"></i>
+            </a>
+        </li>
+        <!--end::Item-->
+        <!--begin::Item-->
+        <li class="nav-item" data-placement="left" data-toggle="tooltip" id="kt_sticky_toolbar_chat_toggler" title="" data-original-title="Chat Example">
+            <a class="btn btn-sm btn-icon btn-bg-light btn-icon-danger btn-hover-danger" data-target="#kt_chat_modal" data-toggle="modal" href="#">
+                <i class="flaticon2-chat-1"></i>
+            </a>
+        </li>
+        <!--end::Item-->
+        <!--begin::Theme Toggle-->
+        <li class="nav-item mt-2" id="kt_demo_panel_toggle" data-placement="left" data-toggle="tooltip" title="" data-original-title="تغيير الوضع (فاتح/داكن)">
+            <a class="btn btn-sm btn-icon btn-bg-light btn-icon-success btn-hover-success" href="#" id="themeToggleBtn">
+                <i class="flaticon2-drop"></i>
+            </a>
+        </li>
+        <!--end::Theme Toggle-->
+    </ul>
+    <!--end::Sticky Toolbar-->
+    <!--begin::Main-->
+    <!--begin::Header Mobile-->
+    <div class="header-mobile bg-primary" id="kt_header_mobile">
+        <!--begin::Logo-->
+        <a href="index.html">
+            <img alt="Logo" class="logo-default max-h-40px" src="assets/media/MOD/Mod-logo.png" />
+        </a>
+        <!--end::Logo-->
+        <!--begin::Toolbar-->
+        <div class="d-flex align-items-center">
+            <button class="btn p-0 burger-icon burger-icon-left ml-4" id="kt_header_mobile_toggle">
+                <span></span>
+            </button>
+            <button class="btn btn-icon btn-hover-transparent-white p-0 ml-3"
+                    id="kt_header_mobile_topbar_toggle">
+                <span class="svg-icon svg-icon-xl">
+                    <!--begin::Svg Icon | path:assets/media/svg/icons/General/User.svg-->
+                    <svg height="24px" version="1.1" viewbox="0 0 24 24" width="24px"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1">
+                            <polygon points="0 0 24 0 24 24 0 24"></polygon>
+                            <path d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z"
+                                  fill="#000000" fill-rule="nonzero" opacity="0.3"></path>
+                            <path d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z"
+                                  fill="#000000" fill-rule="nonzero"></path>
+                        </g>
+                    </svg>
+                    <!--end::Svg Icon-->
+                </span>
+            </button>
+        </div>
+        <!--end::Toolbar-->
+    </div>
+    <!--end::Header Mobile-->
+    <div class="d-flex flex-column flex-root">
+        <!--begin::Page-->
+        <div class="d-flex flex-row flex-column-fluid page">
+            <!--begin::Wrapper-->
+            <div class="d-flex flex-column flex-row-fluid wrapper" id="kt_wrapper">
+                <!--begin::Header-->
+                <div id="kt_header" class="header header-fixed bg-primary">
+                    <!--begin::Container-->
+                    <div class="container d-flex align-items-stretch justify-content-between">
+                        <!--begin::Left-->
+                        <partial name="_MenuPartial" />
+                        <!--end::Left-->
+                        <!--begin::Topbar-->
+                        <div class="topbar">
+                            <!--begin::Notifications-->
+                            <div class="dropdown">
+                                <div class="topbar-item" data-toggle="dropdown" data-offset="10px,0px">
+                                    <div class="btn btn-icon btn-hover-transparent-white btn-dropdown btn-lg mr-1" id="notificationDropdownToggle">
+                                        <span class="svg-icon svg-icon-xl">
+                                            <i class="flaticon2-bell-2 icon-lg text-white"></i>
+                                        </span>
+                                        <span class="badge badge-danger badge-sm notification-badge" id="notificationCount" style="display:none;position:absolute;top:5px;right:5px;">0</span>
+                                    </div>
+                                </div>
+                                <!--begin::Dropdown-->
+                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-anim-up dropdown-menu-lg" style="min-width: 420px; max-height: 600px; overflow-y: auto; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: none;">
+                                    <!--begin::Header-->
+                                    <div class="notification-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px 12px 0 0; position: relative; overflow: hidden;">
+                                        <div style="position: absolute; top: -20px; right: -20px; width: 60px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                                        <div style="position: absolute; bottom: -15px; left: -15px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="symbol symbol-50 mr-3" style="background: rgba(255,255,255,0.2);">
+                                                <span class="symbol-label">
+                                                    <i class="flaticon2-bell-2 icon-xl text-white"></i>
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-weight-bold text-white mb-1">الإشعارات</h4>
+                                                <span class="text-white-50 font-size-sm" id="notificationSubtitle">لديك <span id="unreadCountText">0</span> إشعار جديد</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end::Header-->
+                                    <!--begin::Notifications-->
+                                    <div id="notificationList" class="p-4">
+                                        <div class="text-center py-15">
+                                            <div class="symbol symbol-100 mx-auto mb-5">
+                                                <span class="symbol-label" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                                    <i class="flaticon2-bell-2 icon-3x text-white"></i>
+                                                </span>
+                                            </div>
+                                            <h4 class="text-muted font-weight-bold mb-3">لا توجد إشعارات</h4>
+                                            <p class="text-muted font-size-sm">ستظهر الإشعارات الجديدة هنا عند توفرها</p>
+                                        </div>
+                                    </div>
+                                    <!--end::Notifications-->
+                                    <!--begin::Footer-->
+                                    <div class="d-flex flex-center py-4 border-top bg-light" style="border-radius: 0 0 12px 12px;">
+                                        <button class="btn btn-sm btn-primary font-weight-bold px-4" id="markAllAsReadBtn">
+                                            <i class="flaticon2-check mr-2"></i>تحديد الكل كمقروء
+                                        </button>
+                                    </div>
+                                    <!--end::Footer-->
+                                </div>
+                                <!--end::Dropdown-->
+                            </div>
+                            <!--end::Notifications-->
+                            <!--begin::User-->
+                            <div class="dropdown">
+                                <!--begin::Toggle-->
+                                <div class="topbar-item">
+                                    <div class="btn btn-icon btn-hover-transparent-white d-flex align-items-center btn-lg px-md-2 w-md-auto" id="kt_quick_user_toggle">
+                                        <span class="text-white opacity-70 font-weight-bold font-size-base d-none d-md-inline ml-1">مرحبا,</span>
+                                        <span class="text-white opacity-90 font-weight-bolder font-size-base d-none d-md-inline ml-4">@userName</span>
+                                        <span class="symbol symbol-35">
+                                            <span class="symbol-label text-white font-size-h5 font-weight-bold bg-white-o-30">
+                                                >
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!--end::Toggle-->
+                            </div>
+                            <!--end::User-->
+                        </div>
+                        <!--end::Topbar-->
+                    </div>
+                    <!--end::Container-->
+                </div>
+                <!--end::Header-->
+                <!--begin::Content-->
+                <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+                    <!--begin::Subheader-->
+                    <div class="subheader py-2 py-lg-12 subheader-transparent" id="kt_subheader">
+                        <div class="container d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
+                            <!--begin::Info-->
+                            <div class="d-flex align-items-center flex-wrap mr-1">
+                                <!--begin::Heading-->
+                                <div class="d-flex flex-column">
+                                    <!--begin::Title-->
+                                    <h2 class="text-white font-weight-bold my-2 mr-5">الصفحة الرئيسية</h2>
+                                    <!--end::Title-->
+                                    <!--begin::Breadcrumb-->
+                                    <div class="d-flex align-items-center font-weight-bold my-2">
+                                        <!--begin::Item-->
+                                        <a href="#" class="opacity-75 hover-opacity-100">
+                                            <i class="flaticon2-shelter text-white icon-1x"></i>
+                                        </a>
+                                        <!--end::Item-->
+                                        <!--begin::Item-->
+                                        <span class="label label-dot label-sm bg-white opacity-75 mx-3"></span>
+                                        <a href="/Home" class="text-white text-hover-white opacity-75 hover-opacity-100">الصفحة الرئيسية</a>
+                                        <!--end::Item-->
+                                        <!--begin::Item-->
+                                        <span class="label label-dot label-sm bg-white opacity-75 mx-3"></span>
+                                        <text class="text-white text-hover-white opacity-75 hover-opacity-100">@ViewData["Title"]</text>
+                                        <!--end::Item-->
+                                    </div>
+                                    <!--end::Breadcrumb-->
+                                </div>
+                                <!--end::Heading-->
+                            </div>
+                            <!--end::Info-->
+
+                        </div>
+                    </div>
+                    <!--end::Subheader-->
+                    <!--begin::Entry-->
+                    <!--begin::Loading-->
+                    <!--end::Loading-->
+                    <partial name="_Loading" />
+                    @RenderBody()
+                    <!--end::Entry-->
+                    @RenderSection("Scripts", required: false)
+                </div>
+                <!--end::Content-->
+                <!--begin::Footer-->
+                <div class="footer bg-white py-4 d-flex flex-lg-column" id="kt_footer">
+                    <!--begin::Container-->
+                    <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between">
+                        <!--begin::Copyright-->
+                        <div class="text-dark order-2 order-md-1">
+                            <span class="text-muted font-weight-bold mr-2">@DateTime.Now.Year ©</span>
+                            <a href="#" target="_blank" class="text-dark-75 text-hover-primary">جميع الحقوق محفوظة</a>
+                        </div>
+                        <!--end::Copyright-->
+                    </div>
+                    <!--end::Container-->
+                </div>
+                <!--end::Footer-->
+            </div>
+            <!--end::Wrapper-->
+        </div>
+        <!--end::Page-->
+    </div>
+    <!--end::Main-->
+    <!-- begin::User Panel-->
+    <div id="kt_quick_user" class="offcanvas offcanvas-right p-10">
+        <!--begin::Header-->
+        <div class="offcanvas-header d-flex align-items-center justify-content-between pb-5 border-bottom">
+            <h3 class="font-weight-bold m-0 text-dark">
+                بيانات الحساب
+            </h3>
+            <a href="#" class="btn btn-xs btn-icon btn-light btn-hover-primary rounded-circle" id="kt_quick_user_close">
+                <i class="ki ki-close icon-xs text-muted"></i>
+            </a>
+        </div>
+        <!--end::Header-->
+        <!--begin::Content-->
+        <div class="offcanvas-content pr-5 mr-n5">
+            <!--begin::Header-->
+            <div class="d-flex align-items-center mt-8 mb-8">
+                <div class="symbol symbol-100 mr-6 position-relative">
+                    <div class="symbol-label bg-light-primary rounded-circle" style="background-image:url(/assets/media/users/blank.png); background-size: cover; background-position: center;">
+                        <div class="symbol-badge bg-success position-absolute" style="bottom: 5px; right: 5px; width: 20px; height: 20px; border: 3px solid white; border-radius: 50%;"></div>
+                    </div>
+                </div>
+                <div class="d-flex flex-column flex-grow-1">
+                    <a href="#" class="font-weight-bold font-size-h5 text-dark-75 text-hover-primary mb-2">@fullName</a>
+                    <div class="d-flex align-items-center mb-4">
+                        <span class="svg-icon svg-icon-lg svg-icon-primary mr-2">
+                            <!--begin::Svg Icon | path:assets/media/svg/icons/General/User.svg-->
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <polygon points="0 0 24 0 24 24 0 24"></polygon>
+                                    <path d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"></path>
+                                    <path d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z" fill="#000000" fill-rule="nonzero"></path>
+                                </g>
+                            </svg>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="text-muted font-weight-bold">@userName</span>
+                    </div>
+                    <a asp-controller="Account" asp-action="Logout" class="btn btn-light-primary">
+                        <span class="svg-icon svg-icon-md svg-icon-primary">
+                            <!--begin::Svg Icon | path:assets/media/svg/icons/Navigation/Sign-out.svg-->
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <rect x="0" y="0" width="24" height="24" />
+                                    <path d="M11.2928932,2.29289322 C11.6834175,1.90236893 12.3165825,1.90236893 12.7071068,2.29289322 C13.0976311,2.68341751 13.0976311,3.31658249 12.7071068,3.70710678 L7.41421356,9 L20,9 C20.5522847,9 21,9.44771525 21,10 C21,10.5522847 20.5522847,11 20,11 L7.41421356,11 L12.7071068,16.2928932 C13.0976311,16.6834175 13.0976311,17.3165825 12.7071068,17.7071068 C12.3165825,18.0976311 11.6834175,18.0976311 11.2928932,17.7071068 L4.29289322,10.7071068 C3.902368927,10.3165825 3.902368927,9.68341751 4.29289322,9.29289322 L11.2928932,2.29289322 Z" fill="#000000" fill-rule="nonzero" opacity="0.3" transform="translate(12.500000, 9.500000) scale(-1, 1) translate(-12.500000, -9.500000)" />
+                                    <path d="M3.70710678,15.7071068 C3.31658249,16.0976311 2.68341751,16.0976311 2.29289322,15.7071068 C1.90236893,15.3165825 1.90236893,14.6834175 2.29289322,14.2928932 L8.29289322,8.29289322 C8.68341751,7.90236893 9.31658249,7.90236893 9.70710678,8.29289322 C10.0976311,8.68341751 10.0976311,9.31658249 9.70710678,9.70710678 L4.41421356,15 L17,15 C17.5522847,15 18,15.4477153 18,16 C18,16.5522847 17.5522847,17 17,17 L4.41421356,17 L9.70710678,22.2928932 C10.0976311,22.6834175 10.0976311,23.3165825 9.70710678,23.7071068 C9.31658249,24.0976311 8.68341751,24.0976311 8.29289322,23.7071068 L1.29289322,16.7071068 C0.902368927,16.3165825 0.902368927,15.6834175 1.29289322,15.2928932 L3.70710678,15.7071068 Z" fill="#000000" fill-rule="nonzero" transform="translate(9.500000, 16.500000) scale(-1, 1) translate(-9.500000, -16.500000)" />
+                                </g>
+                            </svg>
+                            <!--end::Svg Icon-->
+                        </span>
+                        تسجيل الخروج
+                    </a>
+                </div>
+            </div>
+            <!--end::Header-->
+            <!--begin::Separator-->
+            <div class="separator separator-dashed my-8"></div>
+            <!--end::Separator-->
+            <!--begin::Nav-->
+            <div class="navi navi-spacer-x-0 p-0">
+                <!--begin::Item-->
+                <a asp-controller="Account" asp-action="AccountDetails" class="navi-item mb-3 transition-all duration-300 hover-scale">
+                    <div class="navi-link rounded-lg border border-light-primary border-hover-primary">
+                        <div class="d-flex align-items-center">
+                            <div class="symbol symbol-40 bg-light-primary rounded-circle">
+                                <div class="symbol-label">
+                                    <span class="svg-icon svg-icon-primary">
+                                        <!--begin::Svg Icon | path:assets/media/svg/icons/Communication/Adress-book2.svg-->
+                                        <svg viewBox="0 0 24 24" width="24px" height="24px" version="1.1">
+                                            <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1">
+                                                <rect x="0" y="0" width="24" height="24" />
+                                                <path opacity="0.3" fill="#000000" d="M 18 2 L 20 2 C 21.6569 2 23 3.34315 23 5 L 23 19 C 23 20.6569 21.6569 22 20 22 L 18 22 L 18 2 Z" />
+                                                <path fill="#000000" d="M 5 2 L 17 2 C 18.6569 2 20 3.34315 20 5 L 20 19 C 20 20.6569 18.6569 22 17 22 L 5 22 C 4.44772 22 4 21.5523 4 21 L 4 3 C 4 2.44772 4.44772 2 5 2 Z M 12 11 C 13.1046 11 14 10.1046 14 9 C 14 7.89543 13.1046 7 12 7 C 10.8954 7 10 7.89543 10 9 C 10 10.1046 10.8954 11 12 11 Z M 7.00036 16.4995 C 6.98863 16.662 7.26484 17 7.40417 17 C 11.4637 17 14.5228 17 16.5815 17 C 16.9988 17 17.0053 16.6222 16.9988 16.5 C 16.836 13.4332 14.6507 12 11.9907 12 C 9.36773 12 7.2157 13.5166 7.00036 16.4995 Z" />
+                                            </g>
+                                        </svg>
+                                        <!--end::Svg Icon-->
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="navi-text flex-grow-1">
+                                <div class="font-weight-bold text-dark mb-1">بيانات الحساب</div>
+                                <div class="text-muted font-size-sm">إدارة معلومات الحساب الشخصية</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <!--end:Item-->
+                <!--begin::Item-->
+                <a asp-controller="Account" asp-action="ResetPassword" asp-route-username="@userName" asp-route-expired="false" asp-route-adminResetUserPassword="false" class="navi-item mb-3 transition-all duration-300 hover-scale">
+                    <div class="navi-link rounded-lg border border-light-primary border-hover-primary">
+                        <div class="d-flex align-items-center">
+                            <div class="symbol symbol-40 bg-light-primary rounded-circle">
+                                <div class="symbol-label">
+                                    <span class="svg-icon svg-icon-primary">
+                                        <!--begin::Svg Icon | path:C:\wamp64\www\keenthemes\legacy\metronic\theme\html\demo2\dist/../src/media/svg/icons\Code\Lock-overturning.svg-->
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <rect x="0" y="0" width="24" height="24" />
+                                                <path d="M7.38979581,2.8349582 C8.65216735,2.29743306 10.0413491,2 11.5,2 C17.2989899,2 22,6.70101013 22,12.5 C22,18.2989899 17.2989899,23 11.5,23 C5.70101013,23 1,18.2989899 1,12.5 C1,11.5151324 1.13559454,10.5619345 1.38913364,9.65805651 L3.31481075,10.1982117 C3.10672013,10.940064 3,11.7119264 3,12.5 C3,17.1944204 6.80557963,21 11.5,21 C16.1944204,21 20,17.1944204 20,12.5 C20,7.80557963 16.1944204,4 11.5,4 C10.54876,4 9.62236069,4.15592757 8.74872191,4.45446326 L9.93948308,5.87355717 C10.0088058,5.95617272 10.0495583,6.05898805 10.05566,6.16666224 C10.0712834,6.4423623 9.86044965,6.67852665 9.5847496,6.69415008 L4.71777931,6.96995273 C4.66931162,6.97269931 4.62070229,6.96837279 4.57348157,6.95710938 C4.30487471,6.89303938 4.13906482,6.62335149 4.20313482,6.35474463 L5.33163823,1.62361064 C5.35654118,1.51920756 5.41437908,1.4255891 5.49660017,1.35659741 C5.7081375,1.17909652 6.0235153,1.2066885 6.2010162,1.41822583 L7.38979581,2.8349582 Z" fill="#000000" opacity="0.3" />
+                                                <path d="M14.5,11 C15.0522847,11 15.5,11.4477153 15.5,12 L15.5,15 C15.5,15.5522847 15.0522847,16 14.5,16 L9.5,16 C8.94771525,16 8.5,15.5522847 8.5,15 L8.5,12 C8.5,11.4477153 8.94771525,11 9.5,11 L9.5,10.5 C9.5,9.11928813 10.6192881,8 12,8 C13.3807119,8 14.5,9.11928813 14.5,10.5 L14.5,11 Z M12,9 C11.1715729,9 10.5,9.67157288 10.5,10.5 L10.5,11 L13.5,11 L13.5,10.5 C13.5,9.67157288 12.8284271,9 12,9 Z" fill="#000000" />
+                                            </g>
+                                        </svg><!--end::Svg Icon-->
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="navi-text flex-grow-1">
+                                <div class="font-weight-bold text-dark mb-1">تغيير كلمة المرور</div>
+                                <div class="text-muted font-size-sm">تحديث كلمة المرور الحالية</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <!--end:Item-->
+            </div>
+            <!--end::Nav-->
+            <!--begin::Separator-->
+            <div class="separator separator-dashed my-8"></div>
+            <!--end::Separator-->
+        </div>
+        <!--end::Content-->
+    </div>
+    <!-- end::User Panel-->
+    <!--begin::Chat Panel-->
+    <div class="modal modal-sticky modal-sticky-bottom-right" id="kt_chat_modal" role="dialog" data-backdrop="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!--begin::Card-->
+                <div class="card card-custom">
+
+
+                    <!--begin::Footer-->
+                    <div class="card-footer align-items-center">
+                        <!--begin::Compose-->
+                        <textarea class="form-control border-0 p-0" rows="2" placeholder="Type a message"></textarea>
+                        <div class="d-flex align-items-center justify-content-between mt-5">
+                            <div class="mr-3">
+                                <a href="#" class="btn btn-clean btn-icon btn-md mr-1">
+                                    <i class="flaticon2-photograph icon-lg"></i>
+                                </a>
+                                <a href="#" class="btn btn-clean btn-icon btn-md">
+                                    <i class="flaticon2-photo-camera icon-lg"></i>
+                                </a>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary btn-md text-uppercase font-weight-bold chat-send py-2 px-6">Send</button>
+                            </div>
+                        </div>
+                        <!--begin::Compose-->
+                    </div>
+                    <!--end::Footer-->
+                </div>
+                <!--end::Card-->
+            </div>
+        </div>
+    </div>
+    <!--end::Chat Panel-->
+    <!--begin::Scrolltop-->
+    <div id="kt_scrolltop" class="scrolltop">
+        <span class="svg-icon">
+            <!--begin::Svg Icon | path:assets/media/svg/icons/Navigation/Up-2.svg-->
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <polygon points="0 0 24 0 24 24 0 24" />
+                    <rect fill="#000000" opacity="0.3" x="11" y="10" width="2" height="10" rx="1" />
+                    <path d="M6.70710678,12.7071068 C6.31658249,13.0976311 5.68341751,13.0976311 5.29289322,12.7071068 C4.90236893,12.3165825 4.90236893,11.6834175 5.29289322,11.2928932 L11.2928932,5.29289322 C11.6714722,4.91431428 12.2810586,4.90106866 12.6757246,5.26284586 L18.6757246,10.7628459 C19.0828436,11.1360383 19.1103465,11.7686056 18.7371541,12.1757246 C18.3639617,12.5828436 17.7313944,12.6103465 17.3242754,12.2371541 L12.0300757,7.38413782 L6.70710678,12.7071068 Z" fill="#000000" fill-rule="nonzero" />
+                </g>
+            </svg>
+            <!--end::Svg Icon-->
+        </span>
+    </div>
+    <!--end::Scrolltop-->
+    <!--begin::script>
+        <!--begin::Meeting Response Modal-->
+    <div class="modal fade" id="meetingResponseModal" tabindex="-1" role="dialog" aria-labelledby="meetingResponseModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title text-white" id="meetingResponseModalLabel">تفاصيل الاجتماع</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <i aria-hidden="true" class="ki ki-close"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="meetingDetailsContent">
+                    <div class="text-center py-10">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="meetingResponseActions">
+                    <!-- Actions will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Meeting Response Modal-->
+
+    <partial name="_ScriptPartial" />
+    <script src="~/js/notifications.js"></script>
+    <!--end::script>
+
+    </body> <!-- This is the correct closing tag for <body> -->
+    <!--end::Body-->
+</html>

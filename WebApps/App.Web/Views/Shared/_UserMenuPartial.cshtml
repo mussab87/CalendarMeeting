@@ -1,0 +1,19 @@
+﻿@{
+    //var menueHijriHere = ViewBag.Title == "التاريخ الهجري" ? "menu-item-here" : "";
+    // var menueCustomPagingHere = ViewBag.CustomPaging == "CustomPaging" ? "menu-item-here" : "";
+    // var menueProductsHere = ViewBag.Title == "Products" ? "menu-item-here" : "";
+
+    var menueCreateMeetingHere = ViewBag.Title == "إنشاء اجتماع جديد" ? "menu-item-here" : "";
+    var menueMeetingDetailsHere = ViewBag.Title == "تفاصيل الاجتماع" ? "menu-item-here" : "";
+    var menueMeetingTodayHere = ViewBag.Title == "اجتماعات اليوم" ? "menu-item-here" : "";
+    var menueAllMeetingHere = ViewBag.Title == "جميع الاجتماعات" ? "menu-item-here" : "";
+    var menueIndexMeetingHere = ViewBag.Title == "التقويم والاجتماعات" ? "menu-item-here" : "";
+    var menueEditMeetingHere = ViewBag.Title == "تعديل الاجتماع" ? "menu-item-here" : "";
+}
+<li class="menu-item menu-item-submenu menu-item-rel @menueCreateMeetingHere @menueMeetingDetailsHere @menueMeetingTodayHere @menueAllMeetingHere @menueIndexMeetingHere @menueEditMeetingHere" aria-haspopup="true">
+    <a href="/Calendar/" class="menu-link">
+        <span class="menu-text">الإجتماعات</span>
+        <span class="menu-desc"></span>
+        <i class="menu-arrow"></i>
+    </a>
+</li>

@@ -1,0 +1,110 @@
+@model IEnumerable<MeetingDto>
+
+@{
+    ViewData["Title"] = "اجتماعات اليوم";
+}
+
+
+<!--begin::Container-->
+<div class="container">
+    <div class="card card-custom">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="card-icon">
+                    <i class="flaticon2-favourite text-primary"></i>
+                </span>
+                <h3 class="card-label">
+                    اجتماعات اليوم - @DateTime.Now.ToString("dd/MM/yyyy")
+                </h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="container mt-4">
+
+                                @if (Model != null && Model.Any())
+                                {
+                                    <div class="row">
+                                        @foreach (var meeting in Model)
+                                        {
+                                            <div class="col-md-6 mb-4">
+                                                <div class="card shadow-sm">
+                                                    <div class="card-header bg-primary text-white">
+                                                        <h5 class="mb-0">@meeting.Title</h5>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <p class="card-text">
+                                                            <strong>الوقت:</strong> @meeting.StartTime.ToString("HH:mm") - @meeting.EndTime.ToString("HH:mm")
+                                                        </p>
+                                                        <p class="card-text">
+                                                            <strong>المكان:</strong> @(meeting.Location ?? "غير محدد")
+                                                        </p>
+                                                        <p class="card-text">
+                                                            <strong>المنظم:</strong> @meeting.OrganizerName
+                                                        </p>
+                                                        <p class="card-text">
+                                                            <strong>الحالة:</strong>
+                                                            <span class="badge bg-@(meeting.Status == "Scheduled" ? "success" : meeting.Status == "Cancelled" ? "danger" : "secondary")">
+                                                                @meeting.Status
+                                                            </span>
+                                                        </p>
+                                                        @if (!string.IsNullOrEmpty(meeting.Description))
+                                                        {
+                                                            <p class="card-text">@meeting.Description</p>
+                                                        }
+                                                    </div>
+                                                    <div class="card-footer">
+                                                        <a href="@Url.Action("Details", "Calendar", new { id = meeting.Id })" class="btn btn-sm btn-info">
+                                                            <i class="fas fa-eye"></i> التفاصيل
+                                                        </a>
+                                                        @if (signInManager.IsSignedIn(User) && (signInManager.Context.User.IsInRole(Roles.SuperAdmin)
+
+                                                                                                        || signInManager.Context.User.IsInRole(Roles.Admin)
+
+                                                                                                        || signInManager.Context.User.IsInRole(Roles.OfficeManager)
+                                                                                                        @* || signInManager.Context.User.IsInRole(Roles.Leader) *@
+                                                                                                        ))
+
+                                                        {
+
+                                                            <a href="@Url.Action("Edit", "Calendar", new { id = meeting.Id })" class="btn btn-sm btn-warning">
+                                                                <i class="fas fa-edit"></i> تعديل
+                                                            </a>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center" role="alert">
+                                        <h4 class="alert-heading">لا توجد اجتماعات اليوم</h4>
+                                        <p>لم يتم جدولة أي اجتماعات لهذا اليوم.</p>
+                                        <hr>
+                                        <a href="@Url.Action("Create", "Calendar")" class="btn btn-primary">إنشاء اجتماع جديد</a>
+                                    </div>
+                                }
+
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <a href="@Url.Action("Index", "Calendar")" class="btn btn-secondary">
+                                            <i class="fas fa-arrow-right"></i> العودة إلى التقويم
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--end::Card-->
+</div>
+<!--end::Container-->

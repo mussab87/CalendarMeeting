@@ -1,0 +1,210 @@
+﻿<script src="~/assets/js/pages/widgets.js"></script>
+
+<script>
+    // Workaround to fix style of text for showing items .. through ..
+    // Problem related to Boostrap 4 according to issue in link below
+    $(document).ready(function () {
+    $('ul.pagination > li.disabled > a').addClass('page-link');
+    });
+    document.getElementById('pageSizeSelector').addEventListener('change', function() {
+    document.getElementById('searchForm').submit();
+    });
+
+    $('#roleModal').on('submit', 'form', function(e) {
+        e.preventDefault(); // Prevent default form submission
+        debugger
+        $.ajax({
+            url: this.action,
+            type: this.method,
+            data: $(this).serialize(),
+            success: function(result) {
+                // Update just the modal content
+                debugger
+                if(result.success){
+                    window.location.reload();
+                    // Show success notification
+                toastr.success(result.data);
+                }
+                else{
+                    $('#roleModal .modal-content').empty().html(result);
+                    $('#roleModal .modal-content').html(result);
+                }
+            }
+        });
+    });
+        $(function() {
+        // Load partial view into modal when Add User button is clicked
+        $("#addRoleButton").click(function() {
+
+            $.ajax({
+                url: '@Url.Action("AddEditRole", "Admin", new { actionType = (int)ActionTypeEnum.Add })',
+                type: 'GET',
+                success: function(response) {
+                    $('#modalContent').html(response);
+                    $('#roleModal').modal('show');
+                    $("#exampleModalLabel").text("إضافة صلاحية");
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+
+    function updateRoleButton(selectedRoleId){
+
+            $.ajax({
+                url: '@Url.Action("AddEditRole", "Admin", new { actionType = (int)ActionTypeEnum.Update })' + '&roleId=' + selectedRoleId,
+                type: 'GET',
+                success: function(response) {
+                    $('#modalContent').html(response);
+                    $('#roleModal').modal('show');
+                    $("#exampleModalLabel").text("تعديل الصلاحية");
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+    }
+
+    function deleteRoleButton(selectedRoleId){
+        debugger;
+                   Swal.fire({
+            text: "هل انت متأكد من حذف هذه الصلاحية",
+            icon: "info",
+            showCancelButton: true,
+            buttonsStyling: false,
+            confirmButtonText: "نعم ،احذف الصلاحية",
+            cancelButtonText: "لا، الغاء",
+            customClass: {
+                confirmButton: "btn font-weight-bold btn-success",
+                cancelButton: "btn font-weight-bold btn-danger"
+            }
+        }).then(function (result) {
+            if (result.value) {
+               // Submit form
+               $.ajax({
+                url: '@Url.Action("DeleteRole", "Admin")',
+                type: 'POST',
+                data: { roleId: selectedRoleId },
+                success: function(response) {
+                    if(response.success)
+                    {
+                        Swal.fire({
+                    text: response.data,
+                    icon: "success",
+                    buttonsStyling: false,
+                    confirmButtonText: "اغلاق",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-primary",
+                    }
+                }).then(function (result) {
+                window.location.reload();
+                });
+
+                    }
+                    else{
+                        toastr.success(response.data);
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+            } else if (result.dismiss === 'cancel') {
+                Swal.fire({
+                    text: "لم يتم حفظ التعديلات",
+                    icon: "error",
+                    buttonsStyling: false,
+                    confirmButtonText: "اغلاق",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-primary",
+                    }
+                });
+            }
+        });
+    }
+
+    function addRolePermissionButton(selectedRoleId)
+    {
+        debugger
+        $.ajax({
+                url: '@Url.Action("AddPermissions", "Admin")' + "?roleId=" + selectedRoleId,
+                type: 'GET',
+                success: function(response) {
+                    $('#modalContent').html(response);
+                    $('#roleModal').modal('show');
+                    
+                    // Initialize select all functionality after modal content is loaded
+                    initializeSelectAllCheckbox();
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+    }
+
+    function initializeSelectAllCheckbox() {
+        // Add select all checkbox if it doesn't exist
+        if ($('#selectAllCheckbox').length === 0) {
+            var selectAllHtml = `
+                <div class="form-group mb-3" style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectAllCheckbox">
+                        <label class="form-check-label font-weight-bold text-primary" for="selectAllCheckbox">
+                            تحديد الكل / إلغاء تحديد الكل
+                        </label>
+                    </div>
+                </div>
+            `;
+            
+            // Insert the select all checkbox at the top of the modal content
+            $('#modalContent .modal-body').prepend(selectAllHtml);
+        }
+
+        // Handle select all checkbox change
+        $('#selectAllCheckbox').off('change').on('change', function() {
+            var isChecked = $(this).is(':checked');
+            
+            // Select/deselect all permission checkboxes in the modal
+            $('#roleModal input[type="checkbox"]:not(#selectAllCheckbox)').prop('checked', isChecked);
+            
+            // Update the label text
+            var labelText = isChecked ? 'إلغاء تحديد الكل' : 'تحديد الكل / إلغاء تحديد الكل';
+            $('#selectAllCheckbox').next('label').text(labelText);
+        });
+
+        // Handle individual checkbox changes to update select all state
+        $('#roleModal input[type="checkbox"]:not(#selectAllCheckbox)').off('change').on('change', function() {
+            var totalCheckboxes = $('#roleModal input[type="checkbox"]:not(#selectAllCheckbox)').length;
+            var checkedCheckboxes = $('#roleModal input[type="checkbox"]:not(#selectAllCheckbox):checked').length;
+            
+            // Update select all checkbox state
+            if (checkedCheckboxes === 0) {
+                $('#selectAllCheckbox').prop('indeterminate', false).prop('checked', false);
+                $('#selectAllCheckbox').next('label').text('تحديد الكل / إلغاء تحديد الكل');
+            } else if (checkedCheckboxes === totalCheckboxes) {
+                $('#selectAllCheckbox').prop('indeterminate', false).prop('checked', true);
+                $('#selectAllCheckbox').next('label').text('إلغاء تحديد الكل');
+            } else {
+                $('#selectAllCheckbox').prop('indeterminate', true).prop('checked', false);
+                $('#selectAllCheckbox').next('label').text('تحديد جزئي');
+            }
+        });
+
+        // Set initial state of select all checkbox
+        var totalCheckboxes = $('#roleModal input[type="checkbox"]:not(#selectAllCheckbox)').length;
+        var checkedCheckboxes = $('#roleModal input[type="checkbox"]:not(#selectAllCheckbox):checked').length;
+        
+        if (checkedCheckboxes === 0) {
+            $('#selectAllCheckbox').prop('indeterminate', false).prop('checked', false);
+            $('#selectAllCheckbox').next('label').text('تحديد الكل / إلغاء تحديد الكل');
+        } else if (checkedCheckboxes === totalCheckboxes) {
+            $('#selectAllCheckbox').prop('indeterminate', false).prop('checked', true);
+            $('#selectAllCheckbox').next('label').text('إلغاء تحديد الكل');
+        } else {
+            $('#selectAllCheckbox').prop('indeterminate', true).prop('checked', false);
+            $('#selectAllCheckbox').next('label').text('تحديد جزئي');
+        }
+    }
+</script>

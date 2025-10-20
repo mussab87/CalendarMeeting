@@ -1,0 +1,154 @@
+<script src="~/assets/js/pages/widgets.js"></script>
+
+<script>
+    // Workaround to fix style of text for showing items .. through ..
+    // Problem related to Boostrap 4 according to issue in link below
+    $(document).ready(function () {
+        $('ul.pagination > li.disabled > a').addClass('page-link');
+    });
+    
+    document.getElementById('pageSizeSelector').addEventListener('change', function() {
+        document.getElementById('searchForm').submit();
+    });
+
+    $('#departmentModal').on('submit', 'form', function(e) {
+        e.preventDefault(); // Prevent default form submission
+        
+        // Validate required fields
+        var isValid = true;
+        var form = $(this);
+        
+        // Check Department Name
+        var nameField = form.find('input[name="Name"]');
+        if (!nameField.val().trim()) {
+            nameField.addClass('is-invalid');
+            isValid = false;
+        } else {
+            nameField.removeClass('is-invalid');
+        }
+        
+        // Check Department Type
+        var typeField = form.find('select[name="DepartmentTypeId"]');
+        if (!typeField.val()) {
+            typeField.addClass('is-invalid');
+            isValid = false;
+        } else {
+            typeField.removeClass('is-invalid');
+        }
+        
+        if (!isValid) {
+            toastr.error('يرجى ملء جميع الحقول المطلوبة');
+            return;
+        }
+        
+        $.ajax({
+            url: this.action,
+            type: this.method,
+            data: $(this).serialize(),
+            success: function(result) {
+                if(result.success){
+                    window.location.reload();
+                    toastr.success(result.data);
+                }
+                else{
+                    $('#departmentModal .modal-content').empty().html(result);
+                    $('#departmentModal .modal-content').html(result);
+                }
+            },
+            error: function() {
+                toastr.error('حدث خطأ أثناء حفظ البيانات');
+            }
+        });
+    });
+
+    $(function() {
+        // Load partial view into modal when Add Department button is clicked
+        $("#addDepartmentButton").click(function() {
+            $.ajax({
+                url: '@Url.Action("AddEditDepartment", "Admin", new { actionType = (int)ActionTypeEnum.Add })',
+                type: 'GET',
+                success: function(response) {
+                    $('#modalContent').html(response);
+                    $('#departmentModal').modal('show');
+                    $("#exampleModalLabel").text("إضافة قسم");
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+
+    function updateDepartmentButton(selectedDepartmentId){
+        $.ajax({
+            url: '@Url.Action("AddEditDepartment", "Admin", new { actionType = (int)ActionTypeEnum.Update })' + '&departmentId=' + selectedDepartmentId,
+            type: 'GET',
+            success: function(response) {
+                $('#modalContent').html(response);
+                $('#departmentModal').modal('show');
+                $("#exampleModalLabel").text("تعديل قسم");
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    }
+
+    function deleteDepartmentButton(selectedDepartmentId){
+        debugger;
+        Swal.fire({
+            text: "هل انت متأكد من حذف هذا القسم",
+            icon: "info",
+            showCancelButton: true,
+            buttonsStyling: false,
+            confirmButtonText: "نعم ،احذف القسم",
+            cancelButtonText: "لا، الغاء",
+            customClass: {
+                confirmButton: "btn font-weight-bold btn-success",
+                cancelButton: "btn font-weight-bold btn-danger"
+            }
+        }).then(function (result) {
+            if (result.value) {
+               // Submit form
+               $.ajax({
+                url: '@Url.Action("DeleteDepartment", "Admin")',
+                type: 'POST',
+                data: { departmentId: selectedDepartmentId },
+                success: function(response) {
+                    if(response.success)
+                    {
+                        Swal.fire({
+                    text: response.data,
+                    icon: "success",
+                    buttonsStyling: false,
+                    confirmButtonText: "اغلاق",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-primary",
+                    }
+                }).then(function (result) {
+                window.location.reload();
+                });
+
+                    }
+                    else{
+                        toastr.success(response.data);
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+            } else if (result.dismiss === 'cancel') {
+                Swal.fire({
+                    text: "لم يتم حفظ التعديلات",
+                    icon: "error",
+                    buttonsStyling: false,
+                    confirmButtonText: "اغلاق",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-primary",
+                    }
+                });
+            }
+        });
+    }
+</script>

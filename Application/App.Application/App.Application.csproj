@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Contracts\Repositories\IProduct\**" />
+    <None Remove="Contracts\Repositories\IProduct\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="ApplicationServiceRegistration.cs" />
+    <Compile Include="Contracts\Captcha\CaptchaService.cs" />
+    <Compile Include="Contracts\Repositories\CacheService\ICacheService.cs" />
+    <Compile Include="Contracts\Repositories\IGeneric\IGenericRepository.cs" />
+    <Compile Include="Contracts\Repositories\IMeetingService\IMeetingService.cs" />
+    <Compile Include="Contracts\Repositories\INotificationService\INotificationService.cs" />
+    <Compile Include="Contracts\Repositories\IUnitOfWork\IUnitOfWork.cs" />
+    <Compile Include="Contracts\Repositories\IUserService\IRoleService.cs" />
+    <Compile Include="Contracts\Repositories\IUserService\IUserService.cs" />
+    <Compile Include="Mappings\MappingProfile.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />-->
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.30" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.30" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.11.0" />
+    <PackageReference Include="X.PagedList.Mvc.Core" Version="10.5.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Domain\App.Domain\App.Domain.csproj" />
+    <ProjectReference Include="..\..\Helper\App.Helper\App.Helper.csproj" />
+  </ItemGroup>
+
+</Project>

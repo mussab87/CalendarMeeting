@@ -1,0 +1,148 @@
+﻿@model RoleDto;
+
+<!-- Button trigger modal-->
+<!-- Modal-->
+<form id="addRoleForm" asp-controller="Admin" asp-action="AddEditRole" method="post" data-ajax="true" data-ajax-method="post" data-ajax-update="#resultMessage" data-ajax-success="onUserAdded">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="exampleModalLabel"></h2>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i aria-hidden="true" class="ki ki-close"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!--begin::Container-->
+            <div class="container">
+                <!--begin::Card-->
+                <div class="card card-custom card-transparent">
+                    <div class="card-body p-0">
+                        <!--begin::Wizard-->
+                        <div class="wizard wizard-4">
+                            <!--begin::Card-->
+                            <div class="card card-custom card-shadowless rounded-top-0">
+                                <div class="accordion accordion-solid accordion-toggle-plus" id="accordionExample6">
+                                    <input type="hidden" asp-for="ActionType" />
+                                    @if (Model != null && Model.ActionType != null)
+                                    {
+                                        @if (Model.ActionType == (int)ActionTypeEnum.Update)
+                                        {
+                                            <input type="hidden" asp-for="Id" />
+                                        }
+                                    }
+                                    <div class="text-center pb-8">
+                                        <div class="text-danger" id="errorAdd" style="font-size: 16px">
+                                        </div>
+                                    </div>
+
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <div class="card-title" data-toggle="collapse" data-target="#roleInformation">
+                                                <i class="flaticon2-user"></i>
+                                                &nbsp;&nbsp;
+                                                <h3>
+                                                    بيانات الصلاحية
+                                                </h3>
+                                            </div>
+                                        </div>
+                                        <div id="roleInformation" class="collapse show" data-parent="#accordionExample6">
+                                            <div class="card-body p-0">
+                                                <div class="row justify-content-center py-8 px-8 py-lg-15 px-lg-10">
+                                                    <div class="col-xl-12 col-xxl-10">
+                                                        <!--begin::Wizard Form-->
+
+                                                        <div class="row justify-content-center">
+                                                            <div class="col-xl-9">
+                                                                <!--begin::Wizard Step 1-->
+                                                                <div class="my-5 step">
+                                                                    @* <h3 class="text-dark font-weight-bold mb-10">بيانات حساب المستخدم:</h3> *@
+                                                                    <!--begin::Group-->
+                                                                    <div class="form-group row">
+                                                                        <label asp-for="Name" class="col-xl-3 col-lg-3 col-form-label"></label>
+                                                                        <div class="col-lg-9 col-xl-9">
+                                                                            @if (Model != null && Model.ActionType != null)
+                                                                            {
+                                                                                @if (Model.ActionType == (int)ActionTypeEnum.Update)
+                                                                                {
+                                                                                    <input class="form-control form-control-solid form-control-lg" asp-for="Name" type="text" readonly="readonly" />
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <input class="form-control form-control-solid form-control-lg" asp-for="Name" type="text" />
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <input class="form-control form-control-solid form-control-lg" asp-for="Name" type="text" />
+                                                                            }
+
+
+                                                                            <span asp-validation-for="Name" class="alert-danger"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Group-->
+                                                                    <!--begin::Group-->
+                                                                    <div class="form-group row">
+                                                                        <label asp-for="RoleNameArabic" class="col-xl-3 col-lg-3 col-form-label"></label>
+                                                                        <div class="col-lg-9 col-xl-9">
+                                                                            <input class="form-control form-control-solid form-control-lg" asp-for="RoleNameArabic" type="text" />
+                                                                            <span asp-validation-for="RoleNameArabic" class="alert-danger"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Group-->
+                                                                    <!--begin::Group-->
+                                                                    <div class="form-group row">
+                                                                        <label asp-for="Description" class="col-xl-3 col-lg-3 col-form-label"></label>
+                                                                        <div class="col-lg-9 col-xl-9">
+                                                                            <input class="form-control form-control-solid form-control-lg" asp-for="Description" type="text" />
+                                                                            <span asp-validation-for="Description" class="alert-danger"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Group-->
+                                                                    <!--begin::Group-->
+                                                                    <div class="form-group row">
+                                                                        <label asp-for="IsDeleted" class="col-form-label col-xl-3 col-lg-3"></label>
+                                                                        <div class="col-xl-9 col-lg-9">
+                                                                            <select asp-for="IsDeleted" class="form-control form-control-lg form-control-solid">
+                                                                                <option value="">اختر من القائمة</option>
+                                                                                <option value="true">نعم</option>
+                                                                                <option value="false">لا</option>
+                                                                            </select>
+                                                                            <span asp-validation-for="IsDeleted" class="alert-danger"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Group-->
+                                                                </div>
+                                                                <!--end::Wizard Step 1-->
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Wizard Form-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--begin::Body-->
+                                <!--end::Body-->
+                            </div>
+                            <!--end::Card-->
+                        </div>
+                        <!--end::Wizard-->
+                    </div>
+                </div>
+                <!--end::Card-->
+            </div>
+            <!--end::Container-->
+        </div>
+        <div class="modal-footer" style="text-align: right; direction: ltr;">
+            <button type="button" class="btn btn-danger font-weight-bold" data-dismiss="modal" style="border-radius: 8px; padding: 10px 20px;">
+                <i class="fas fa-times me-2"></i>
+                رجوع
+            </button>
+            <button type="submit" class="btn btn-success font-weight-bolder" style="background: #29504D !important; color: white !important; border: none; border-radius: 8px; padding: 10px 25px; margin-right: 8px;">
+                <i class="fas fa-save me-2"></i>
+                حفظ
+            </button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,639 @@
+@model UpdateMeetingDto
+@{
+    ViewData["Title"] = "تعديل الاجتماع";
+}
+
+@if (ViewBag.success != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            toastr.success('@ViewBag.success');
+        });
+    </script>
+}
+@if (ViewBag.error != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            toastr.error('@ViewBag.error');
+        });
+    </script>
+}
+
+<style>
+    .meeting-edit-container {
+        background: transparent;
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    .meeting-edit-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease;
+    }
+
+        .meeting-edit-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .meeting-edit-header {
+        background: #29504D !important;
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+    }
+
+        .meeting-edit-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+    @@keyframes float {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+
+        50% {
+            transform: translateY(-20px) rotate(180deg);
+        }
+    }
+
+    .meeting-icon {
+        width: 120px;
+        height: 120px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        border: 4px solid rgba(255,255,255,0.3);
+        position: relative;
+        z-index: 1;
+    }
+
+        .meeting-icon i {
+            font-size: 3rem;
+            color: white;
+        }
+
+    .meeting-edit-body {
+        padding: 2rem;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+        .form-section h4 {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ecf0f1;
+            position: relative;
+        }
+
+            .form-section h4::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 50px;
+                height: 2px;
+                background: #29504D;
+            }
+
+    .form-group-modern {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-label-modern {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        display: block;
+        font-size: 1rem;
+    }
+
+    .form-control-modern {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+        .form-control-modern:focus {
+            border-color: #29504D;
+            box-shadow: 0 0 0 0.2rem rgba(41, 80, 77, 0.25);
+            background: white;
+            transform: translateY(-1px);
+        }
+
+        .form-control-modern:hover {
+            border-color: #29504D;
+            background: white;
+        }
+
+    .guidance-card {
+        background: #29504D !important;
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .guidance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+    @@keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .guidance-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .guidance-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+        .guidance-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+            .guidance-list li i {
+                margin-left: 0.75rem;
+                font-size: 1.1rem;
+                color: #10b98a;
+            }
+
+    .btn-modern {
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        border: none;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .btn-save {
+        background: #29504D !important;
+        color: white;
+    }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(41, 80, 77, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-cancel {
+        background: #dc3545 !important;
+        color: white;
+    }
+
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(220, 53, 69, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .floating-shapes {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(41, 80, 77, 0.05);
+        border-radius: 50%;
+        animation: float-shapes 20s infinite linear;
+    }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            left: 80%;
+            animation-delay: -5s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 80%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+
+    @@keyframes float-shapes {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+            opacity: 0.7;
+        }
+
+        50% {
+            transform: translateY(-100px) rotate(180deg);
+            opacity: 0.3;
+        }
+    }
+
+    .select2-container--default .select2-selection--multiple {
+        border: 2px solid #e9ecef !important;
+        border-radius: 10px !important;
+        background: #f8f9fa !important;
+        min-height: 48px !important;
+    }
+
+        .select2-container--default .select2-selection--multiple:focus {
+            border-color: #29504D !important;
+            box-shadow: 0 0 0 0.2rem rgba(41, 80, 77, 0.25) !important;
+        }
+
+    .select2-container--default .select2-selection--single {
+        border: 2px solid #e9ecef !important;
+        border-radius: 10px !important;
+        background: #f8f9fa !important;
+        height: 48px !important;
+    }
+
+        .select2-container--default .select2-selection--single:focus {
+            border-color: #29504D !important;
+            box-shadow: 0 0 0 0.2rem rgba(41, 80, 77, 0.25) !important;
+        }
+
+    .form-check-input:checked {
+        background-color: #29504D !important;
+        border-color: #29504D !important;
+    }
+
+    .form-check-input:focus {
+        border-color: #29504D !important;
+        box-shadow: 0 0 0 0.2rem rgba(41, 80, 77, 0.25) !important;
+    }
+</style>
+
+<!-- Floating Background Shapes -->
+<div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+</div>
+
+<div class="meeting-edit-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <!-- Main Meeting Edit Card -->
+                <div class="meeting-edit-card">
+                    <!-- Header -->
+                    <div class="meeting-edit-header">
+                        <div class="meeting-icon">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <h2 class="mb-2">تعديل الاجتماع</h2>
+                        <p class="mb-0 opacity-75">قم بتعديل تفاصيل الاجتماع والمعلومات المرتبطة</p>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="meeting-edit-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <form asp-controller="Calendar" asp-action="Edit" method="post">
+                                    <input type="hidden" name="meetingId" value="@ViewBag.MeetingId" />
+
+                                    <!-- Basic Information Section -->
+                                    <div class="form-section">
+                                        <h4><i class="fas fa-info-circle me-2"></i>المعلومات الأساسية</h4>
+
+                                        <div class="form-group-modern">
+                                            <label for="title" class="form-label-modern">عنوان الاجتماع *</label>
+                                            <input asp-for="Title" class="form-control-modern" required oninvalid="this.setCustomValidity('حقل اجباري')" oninput="this.setCustomValidity('')">
+                                        </div>
+
+                                        <div class="form-group-modern">
+                                            <label for="description" class="form-label-modern">الوصف</label>
+                                            <textarea asp-for="Description" class="form-control-modern" id="description" name="description" rows="3"></textarea>
+                                        </div>
+
+                                        <div class="form-group-modern">
+                                            <label for="authority" class="form-label-modern">جهة الاجتماع</label>
+                                            <input asp-for="Authority" class="form-control-modern">
+                                        </div>
+                                    </div>
+
+                                    <!-- Meeting Details Section -->
+                                    <div class="form-section">
+                                        <h4><i class="fas fa-calendar-alt me-2"></i>تفاصيل الاجتماع</h4>
+
+                                        <div class="form-group-modern">
+                                            <label class="form-label-modern">نوع الإجتماع *</label>
+                                            <select asp-for="MeetingType" class="form-control-modern" required oninvalid="this.setCustomValidity('حقل اجباري')" oninput="this.setCustomValidity('')">
+                                                <option value="@Convert.ToInt32(MeetingTypeEnum.Internal)">داخلي</option>
+                                                <option value="@Convert.ToInt32(MeetingTypeEnum.External)">خارجي</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group-modern">
+                                            <label for="PriorityId" class="form-label-modern">درجة اهمية الاجتماع *</label>
+                                            <select asp-for="PriorityId" class="form-control-modern select2-priority" asp-items="@ViewBag.priorities" required oninvalid="this.setCustomValidity('حقل اجباري')" oninput="this.setCustomValidity('')">
+                                                <option value="">اختر من القائمة</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group-modern">
+                                            <label for="MeetingPoints" class="form-label-modern">اجندة الاجتماع</label>
+                                            <textarea asp-for="MeetingPoints" class="form-control-modern" rows="4"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- Time and Location Section -->
+                                    <div class="form-section">
+                                        <h4><i class="fas fa-clock me-2"></i>الوقت والمكان</h4>
+
+                                        <div class="form-group-modern">
+                                            <label for="startDate" class="form-label-modern">تاريخ البداية *</label>
+                                            <input asp-for="StartTime" type="datetime-local" class="form-control-modern" required oninvalid="this.setCustomValidity('حقل اجباري')" oninput="this.setCustomValidity('')">
+                                        </div>
+
+                                        <div class="form-group-modern">
+                                            <label for="endDate" class="form-label-modern">تاريخ النهاية *</label>
+                                            <input asp-for="EndTime" type="datetime-local" class="form-control-modern" required oninvalid="this.setCustomValidity('حقل اجباري')" oninput="this.setCustomValidity('')">
+                                        </div>
+
+                                        <div class="form-group-modern">
+                                            <label for="location" class="form-label-modern">المكان *</label>
+                                            <select asp-for="LocationId" class="form-control-modern" asp-items="@ViewBag.location" required oninvalid="this.setCustomValidity('حقل اجباري')" oninput="this.setCustomValidity('')">
+                                                <option value="">اختر من القائمة</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Participants and Recurrence Section -->
+                                    <div class="form-section">
+                                        <h4><i class="fas fa-users me-2"></i>المشاركين والتكرار</h4>
+
+                                        <div class="form-group-modern">
+                                            <label for="ParticipantIds" class="form-label-modern">المشاركين في الإجتماع</label>
+                                            <select asp-for="ParticipantIds" class="form-control-modern select2-participants" asp-items="@ViewBag.participants" multiple="multiple" dir="rtl">
+                                            </select>
+                                        </div>
+
+                                        @*  <div class="form-group-modern">
+                                            <div class="form-check">
+                                                <input asp-for="IsRecurring" class="form-check-input" type="checkbox" id="isRecurring">
+                                                <label class="form-check-label" for="isRecurring">
+                                                    اجتماع متكرر
+                                                </label>
+                                            </div>
+                                        </div> *@
+
+                                        @* <div id="recurrenceOptions" class="form-group-modern" style="display: none;">
+                                            <label for="recurrenceRule" class="form-label-modern">نمط التكرار</label>
+                                            <select asp-for="RecurrenceRule" class="form-control-modern" id="recurrenceRule">
+                                                <option value="">اختر نمط التكرار</option>
+                                                <option value="FREQ=DAILY">يومي</option>
+                                                <option value="FREQ=WEEKLY">أسبوعي</option>
+                                                <option value="FREQ=MONTHLY">شهري</option>
+                                            </select>
+                                        </div> *@
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="d-flex gap-3 justify-content-center mt-4">
+                                        <button type="submit" class="btn-modern btn-save">
+                                            <i class="fas fa-save"></i> حفظ التعديلات
+                                        </button>
+                                        <a href="@Url.Action("Index", "Calendar")" class="btn-modern btn-cancel">
+                                            <i class="fas fa-times"></i> إلغاء
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="col-md-4">
+                                <!-- Guidance Card -->
+                                <div class="guidance-card">
+                                    <h5 class="guidance-title">
+                                        <i class="fas fa-lightbulb me-2"></i>إرشادات التعديل
+                                    </h5>
+                                    <ul class="guidance-list">
+                                        <li><i class="fas fa-check"></i> الحقول المميزة بـ * إلزامية</li>
+                                        <li><i class="fas fa-check"></i> يمكنك تعديل المشاركين في الاجتماع</li>
+                                        <li><i class="fas fa-check"></i> يمكنك تعديل موعد الاجتماع</li>
+                                        <li><i class="fas fa-check"></i> سيتم إرسال إشعارات للمشاركين بالتغييرات</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show/hide recurrence options based on checkbox state
+    document.addEventListener('DOMContentLoaded', function() {
+        const isRecurringCheckbox = document.getElementById('isRecurring');
+        const recurrenceOptions = document.getElementById('recurrenceOptions');
+
+        if (isRecurringCheckbox && recurrenceOptions) {
+            // Function to toggle recurrence options
+            function toggleRecurrenceOptions() {
+                if (isRecurringCheckbox.checked) {
+                    recurrenceOptions.style.display = 'block';
+                } else {
+                    recurrenceOptions.style.display = 'none';
+                }
+            }
+
+            // Check initial state on page load
+            toggleRecurrenceOptions();
+
+            // Add event listener for checkbox changes
+            isRecurringCheckbox.addEventListener('change', toggleRecurrenceOptions);
+
+            // Also check if the recurrence rule has a value to show options
+            const recurrenceRule = document.getElementById('recurrenceRule');
+            if (recurrenceRule && recurrenceRule.value && recurrenceRule.value.trim() !== '') {
+                isRecurringCheckbox.checked = true;
+                toggleRecurrenceOptions();
+            }
+        }
+    });
+
+    // Initialize Select2 for participants and priority selection
+    // Use a more robust initialization that works even if jQuery loads later
+    function initializeSelect2() {
+        if (typeof $ !== 'undefined' && $.fn.select2) {
+            // Initialize Select2 for participants (multiple selection)
+            $('.select2-participants').select2({
+                placeholder: "اختر المشاركين في الاجتماع",
+                allowClear: true,
+                width: '100%',
+                dir: 'rtl',
+                language: {
+                    noResults: function() {
+                        return "لم يتم العثور على نتائج";
+                    },
+                    searching: function() {
+                        return "جاري البحث...";
+                    },
+                    removeAllItems: function() {
+                        return "إزالة جميع العناصر";
+                    }
+                }
+            });
+
+            // Initialize Select2 for priority (single selection)
+            $('.select2-priority').select2({
+                placeholder: "اختر درجة اهمية الاجتماع",
+                allowClear: true,
+                width: '100%',
+                dir: 'rtl',
+                language: {
+                    noResults: function() {
+                        return "لم يتم العثور على نتائج";
+                    },
+                    searching: function() {
+                        return "جاري البحث...";
+                    }
+                }
+            });
+
+            // Add custom CSS for RTL alignment
+            $('<style>')
+                .prop('type', 'text/css')
+                .html(`
+                    /* RTL styling for multiple selection */
+                    .select2-container--default .select2-selection--multiple {
+                        text-align: right !important;
+                        direction: rtl !important;
+                    }
+                    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+                        text-align: right !important;
+                        direction: rtl !important;
+                        padding: 3px 5px 3px 18px !important;
+                        margin: 3px 0 3px 5px !important;
+                        float: right !important;
+                    }
+                    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+                        left: 5px !important;
+                        right: auto !important;
+                        text-align: center !important;
+                    }
+                    .select2-container--default .select2-search--inline .select2-search__field {
+                        text-align: right !important;
+                        direction: rtl !important;
+                    }
+
+                    /* RTL styling for single selection */
+                    .select2-container--default .select2-selection--single {
+                        text-align: right !important;
+                        direction: rtl !important;
+                    }
+                    .select2-container--default .select2-selection--single .select2-selection__rendered {
+                        text-align: right !important;
+                        direction: rtl !important;
+                        padding-right: 20px !important;
+                        padding-left: 12px !important;
+                    }
+                    .select2-container--default .select2-selection--single .select2-selection__arrow {
+                        left: 1px !important;
+                        right: auto !important;
+                    }
+
+                    /* Common RTL styling */
+                    .select2-container--default .select2-results__option {
+                        text-align: right !important;
+                        direction: rtl !important;
+                    }
+                    .select2-dropdown {
+                        text-align: right !important;
+                        direction: rtl !important;
+                    }
+                    .select2-container--default .select2-search--dropdown .select2-search__field {
+                        text-align: right !important;
+                        direction: rtl !important;
+                    }
+                `)
+                .appendTo('head');
+        } else {
+            // Retry after a short delay if jQuery/Select2 not ready
+            setTimeout(initializeSelect2, 100);
+        }
+    }
+
+    // Try to initialize immediately, or when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeSelect2);
+    } else {
+        initializeSelect2();
+    }
+</script>

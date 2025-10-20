@@ -1,0 +1,202 @@
+@model PaginatedResult<MeetingDto>
+
+@{
+    ViewData["Title"] = "جميع الاجتماعات";
+    ViewData["action"] = "Meetings";
+    ViewData["PageSize"] = Model.PageSize;
+    ViewData["SearchString"] = Model.SearchString;
+
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var currentUserDeptId = User.FindFirstValue("deptId");
+}
+
+<!--begin::Container-->
+<div class="container">
+    <div class="card card-custom">
+        <div class="card-header" style="background: #29504D !important;">
+            <div class="card-title">
+                <span class="card-icon">
+                    <i class="flaticon2-calendar-8 text-white"></i>
+                </span>
+                <h3 class="card-label" style="color: white !important;">
+                    جميع الاجتماعات
+                </h3>
+            </div>
+            <div class="card-toolbar">
+                @if (signInManager.IsSignedIn(User) && (signInManager.Context.User.IsInRole(Roles.SuperAdmin)
+                                || signInManager.Context.User.IsInRole(Roles.Admin)
+                                || signInManager.Context.User.IsInRole(Roles.OfficeManager)
+                                //|| signInManager.Context.User.IsInRole(Roles.Leader)
+                                ))
+                {
+                    <a href="@Url.Action("Create", "Calendar")" class="btn btn-light font-weight-bolder">
+                        <i class="la la-plus"></i>
+                        إضافة اجتماع جديد
+                    </a>
+                }
+            </div>
+        </div>
+        <div class="card-body" style="padding-top: 10px;">
+            <!--begin: Search-->
+            <partial name="_PagedListSearch" />
+            <!--end: Search-->
+            @if (Model.Items != null && Model.Items.Any())
+            {
+                <div class="table-responsive mt-4">
+                    <table class="table table-bordered table-hover table-checkable mb-0">
+                        <thead style="background: #29504D !important; color: white !important;">
+                            <tr>
+                                <th>العنوان</th>
+                                <th>التاريخ</th>
+                                <th>الوقت</th>
+                                <th>المكان</th>
+                                <th>المنظم</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var meeting in Model.Items)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold text-dark">@meeting.Title</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted">@meeting.StartTime.ToString("dd/MM/yyyy")</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted">@meeting.StartTime.ToString("HH:mm") - @meeting.EndTime.ToString("HH:mm")</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted">@(meeting.Location ?? "غير محدد")</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted">@meeting.OrganizerName</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-@(meeting.Status == "Scheduled" || meeting.Status == "مجدول" ? "success" : meeting.Status == "Cancelled" || meeting.Status == "ملغي" ? "danger" : "info")">
+                                            @meeting.Status
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="@Url.Action("Details", "Calendar", new { id = meeting.Id })" class="btn btn-sm btn-default btn-text-primary btn-hover-primary btn-icon" title="التفاصيل">
+                                            <i class="la la-eye"></i>
+                                        </a>
+                                        @{
+                                            var isOrganizer = meeting.OrganizerId == currentUserId;
+                                            var isSameDepartment = meeting.OrganizerDepartmentId?.ToString() == currentUserDeptId;
+                                            var hasRole = signInManager.Context.User.IsInRole(Roles.SuperAdmin)
+                                            || signInManager.Context.User.IsInRole(Roles.Admin)
+                                            || signInManager.Context.User.IsInRole(Roles.OfficeManager)
+                                            // || signInManager.Context.User.IsInRole(Roles.Leader)
+                                            ;
+                                            var canEdit = signInManager.IsSignedIn(User) && hasRole && (isOrganizer || isSameDepartment);
+                                        }
+                                        @if (canEdit)
+                                        {
+                                            <a href="@Url.Action("Edit", "Calendar", new { id = meeting.Id })" class="btn btn-sm btn-default btn-text-primary btn-hover-primary btn-icon" title="تعديل">
+                                                <i class="la la-edit"></i>
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!--begin: Pagination-->
+                <partial name="_PagedListPagerPartial" model="Model" />
+                <!--end: Pagination-->
+            }
+            else
+            {
+                <div class="card card-custom mt-4">
+                    <div class="card-body text-center py-10">
+                        <div class="symbol symbol-100 mb-5" style="background: rgba(41, 80, 77, 0.1); border-radius: 50%; width: 100px; height: 100px; margin: 0 auto;">
+                            <span class="symbol-label">
+                                <i class="flaticon2-calendar-8" style="font-size: 3rem; color: #29504D;"></i>
+                            </span>
+                        </div>
+                        <h3 class="text-dark font-weight-bolder mb-3">لا توجد اجتماعات</h3>
+                        <p class="text-muted font-weight-bold mb-5">لم يتم جدولة أي اجتماعات حتى الآن</p>
+                        @if (signInManager.IsSignedIn(User) && (signInManager.Context.User.IsInRole(Roles.SuperAdmin)
+                                            || signInManager.Context.User.IsInRole(Roles.Admin)
+                                            || signInManager.Context.User.IsInRole(Roles.OfficeManager)
+                                            || signInManager.Context.User.IsInRole(Roles.Leader)))
+                        {
+                            <a href="@Url.Action("Create", "Calendar")" class="btn font-weight-bolder" style="background: #29504D !important; color: white !important;">
+                                <i class="la la-plus"></i>
+                                إنشاء اجتماع جديد
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <!--end::Card-->
+</div>
+<!--end::Container-->
+
+<style>
+    /* Brand Color Styling */
+    .card-header {
+        background: #29504D !important;
+    }
+
+    .pagination-buttons .btn-light-success {
+        background: rgba(41, 80, 77, 0.1) !important;
+        color: #29504D !important;
+        border: none;
+    }
+
+        .pagination-buttons .btn-light-success:hover {
+            background: #29504D !important;
+            color: white !important;
+        }
+
+    .pagination-buttons .active {
+        background: #29504D !important;
+        color: white !important;
+    }
+
+    .btn-primary {
+        background: #29504D !important;
+        border-color: #29504D !important;
+    }
+
+        .btn-primary:hover {
+            background: #1f3d3b !important;
+            border-color: #1f3d3b !important;
+        }
+
+    .table-hover tbody tr:hover {
+        background: rgba(41, 80, 77, 0.05) !important;
+    }
+
+    .badge-success {
+        background: #29504D !important;
+    }
+
+    .btn-hover-primary:hover {
+        color: #29504D !important;
+    }
+
+    .text-primary {
+        color: #29504D !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-submit form when page size changes
+        const pageSizeSelector = document.getElementById('pageSizeSelector');
+        if (pageSizeSelector) {
+            pageSizeSelector.addEventListener('change', function() {
+                document.getElementById('searchForm').submit();
+            });
+        }
+    });
+</script>

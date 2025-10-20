@@ -1,0 +1,23 @@
+﻿@using App.Application.Contracts.Repositories.IUserService
+@using App.Domain.UserSecurity
+@using App.Web
+@using App.Web.Models
+@using App.Helper
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization;
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Http;
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using App.Helper.Dto;
+@using App.Helper.Enum;
+@using App.Helper.Constants;
+@* @using X.PagedList.Web.Common; *@
+@* @using App.Domain.Common *@
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, App.Web
+@inject IHttpContextAccessor HttpContextAccessor
+@inject UserManager<User> _userManager;
+@inject SignInManager<User> signInManager;
+@inject IUserService _userService;

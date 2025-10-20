@@ -1,0 +1,36 @@
+﻿<!--begin: Search-->
+<form asp-action="@ViewData["action"]" method="get" id="searchForm">
+    <div class="row" dir="rtl" style="height: 50px;margin-bottom: -10px;">
+        <div class="col-sm-12 col-md-6" style="text-align-last: right">
+            <div class="dataTables_filter">
+                <label>
+                    <input type="search" name="searchString" value="@ViewData["SearchString"]" class="form-control form-control-sm" placeholder="بحث">
+                </label>
+                <button type="submit" class="btn btn-primary">
+                    بحث
+                    <i class="flaticon-search"></i>
+                </button>
+
+                <a asp-action="@ViewData["action"]" class="btn btn-secondary">
+                    تحديث
+                    <i class="flaticon2-reload"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-6" style="text-align-last: left">
+            <div class="dataTables_length">
+                <label>
+                    <select name="pageSize" id="pageSizeSelector" class="custom-select custom-select-sm form-control form-control-sm">
+                        @* <option value="2" selected="@((int)ViewData["PageSize"] != null && (int)ViewData["PageSize"] == 2)">2</option> *@
+                        <option value="10" selected="@((int)ViewData["PageSize"] != null && (int)ViewData["PageSize"] == 10)">10</option>
+                        <option value="25" selected="@((int)ViewData["PageSize"] != null && (int)ViewData["PageSize"] == 25)">25</option>
+                        <option value="50" selected="@((int)ViewData["PageSize"] != null && (int)ViewData["PageSize"] == 50)">50</option>
+                        <option value="100" selected="@((int)ViewData["PageSize"] != null && (int)ViewData["PageSize"] == 100)">100</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+    </div>
+</form>
+<!--end: Search-->

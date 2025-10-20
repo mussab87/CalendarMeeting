@@ -1,0 +1,1703 @@
+@model MeetingDto
+
+@{
+    ViewData["Title"] = "تفاصيل الاجتماع";
+}
+
+<style>
+    .meeting-details-container {
+        background: transparent;
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    .meeting-details-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease;
+    }
+
+        .meeting-details-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .meeting-details-header {
+        background: #29504D !important;
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+    }
+
+        .meeting-details-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+    @@keyframes float {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+
+        50% {
+            transform: translateY(-20px) rotate(180deg);
+        }
+    }
+
+    .meeting-icon {
+        width: 120px;
+        height: 120px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        border: 4px solid rgba(255,255,255,0.3);
+        position: relative;
+        z-index: 1;
+    }
+
+        .meeting-icon i {
+            font-size: 3rem;
+            color: white;
+        }
+
+    .meeting-details-body {
+        padding: 2rem;
+    }
+
+    .info-section {
+        margin-bottom: 2rem;
+    }
+
+        .info-section h4 {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ecf0f1;
+            position: relative;
+        }
+
+            .info-section h4::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 50px;
+                height: 2px;
+                background: #29504D;
+            }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+    }
+
+        .info-item:hover {
+            background: #e9ecef;
+            border-left-color: #29504D;
+            transform: translateX(5px);
+        }
+
+    .info-icon {
+        width: 45px;
+        height: 45px;
+        background: #29504D !important;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 1rem;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .info-content {
+        flex: 1;
+    }
+
+    .info-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-scheduled {
+        background: #28a745 !important;
+        color: white;
+    }
+
+    .status-cancelled {
+        background: #dc3545 !important;
+        color: white;
+    }
+
+    .status-completed {
+        background: #17a2b8 !important;
+        color: white;
+    }
+
+    .priority-badge {
+        background: #29504D !important;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .meeting-type-badge {
+        background: #29504D !important;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .participants-card {
+        background: #29504D !important;
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .participants-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+    @@keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .participants-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .participant-item {
+        background: rgba(255,255,255,0.15);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+
+        .participant-item:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+
+    .participant-name {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .participant-role {
+        font-size: 0.8rem;
+        opacity: 0.9;
+    }
+
+    .response-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .response-accepted {
+        background: #28a745 !important;
+        color: white;
+    }
+
+    .response-declined {
+        background: #dc3545 !important;
+        color: white;
+    }
+
+    .response-pending {
+        background: #ffc107 !important;
+        color: #212529;
+    }
+
+    .attachments-card {
+        background: #6c757d !important;
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .attachments-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+    .attachments-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .attachment-item {
+        background: rgba(255,255,255,0.15);
+        border-radius: 10px;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: white;
+        display: block;
+    }
+
+        .attachment-item:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-modern {
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        border: none;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .btn-edit {
+        background: #ffc107 !important;
+        color: #212529;
+    }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+            color: #212529;
+            text-decoration: none;
+        }
+
+    .btn-cancel {
+        background: #dc3545 !important;
+        color: white;
+    }
+
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(220, 53, 69, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-results {
+        background: #29504D !important;
+        color: white;
+    }
+
+        .btn-results:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(41, 80, 77, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-back {
+        background: #6c757d !important;
+        color: white;
+    }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .floating-shapes {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(41, 80, 77, 0.05);
+        border-radius: 50%;
+        animation: float-shapes 20s infinite linear;
+    }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            left: 80%;
+            animation-delay: -5s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 80%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+
+    @@keyframes float-shapes {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+            opacity: 0.7;
+        }
+
+        50% {
+            transform: translateY(-100px) rotate(180deg);
+            opacity: 0.3;
+        }
+    }
+
+
+    .decline-reason {
+        background: #fff3cd;
+        border-radius: 8px;
+        border-right: 3px solid #dc3545;
+        padding: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+        .decline-reason strong {
+            color: #2c5530 !important;
+            font-weight: bold !important;
+        }
+
+    .form-control-modern {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+        .form-control-modern:focus {
+            border-color: #29504D;
+            box-shadow: 0 0 0 0.2rem rgba(41, 80, 77, 0.25);
+            background: white;
+            transform: translateY(-1px);
+        }
+
+    .form-label-modern {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        display: block;
+        font-size: 1rem;
+    }
+
+    /* Fix footer positioning */
+    .meeting-details-container {
+        position: relative;
+        min-height: 100vh;
+    }
+
+    /* Ensure icons are visible */
+    .info-icon i,
+    .participants-title i,
+    .attachments-title i,
+    .btn-modern i {
+        display: inline-block !important;
+        font-family: "Font Awesome 5 Free" !important;
+        font-weight: 900 !important;
+    }
+
+    /* Fix any missing icon styles */
+    .fas, .far, .fab {
+        font-family: "Font Awesome 5 Free" !important;
+        font-weight: 900 !important;
+    }
+
+    /* File Upload Styling */
+    .file-upload-container {
+        position: relative;
+        display: block;
+        width: 100%;
+    }
+
+    .file-upload-input {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    .file-upload-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 120px;
+        padding: 2rem;
+        border: 2px dashed #29504D;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        direction: rtl;
+    }
+
+        .file-upload-label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(41, 80, 77, 0.05) 0%, rgba(41, 80, 77, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .file-upload-label:hover {
+            border-color: #29504D;
+            background: linear-gradient(135deg, rgba(41, 80, 77, 0.05) 0%, rgba(41, 80, 77, 0.1) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(41, 80, 77, 0.15);
+        }
+
+            .file-upload-label:hover::before {
+                opacity: 1;
+            }
+
+            .file-upload-label:hover .file-upload-text {
+                color: #29504D;
+            }
+
+        .file-upload-label i {
+            font-size: 2.5rem;
+            color: #29504D;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-label:hover i {
+            color: #29504D;
+            transform: scale(1.1);
+        }
+
+    .file-upload-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #29504D;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+        direction: rtl;
+        text-align: center;
+    }
+
+    .file-upload-hint {
+        font-size: 0.9rem;
+        color: #6c757d;
+        font-weight: 500;
+        direction: rtl;
+        text-align: center;
+    }
+
+    /* File Upload Active State */
+    .file-upload-input:focus + .file-upload-label {
+        border-color: #29504D;
+        box-shadow: 0 0 0 0.2rem rgba(41, 80, 77, 0.25);
+    }
+
+    /* File Upload with Files Selected */
+    .file-upload-container.has-files .file-upload-label {
+        border-color: #29504D;
+        background: linear-gradient(135deg, rgba(41, 80, 77, 0.1) 0%, rgba(41, 80, 77, 0.15) 100%);
+    }
+
+    .file-upload-container.has-files .file-upload-text {
+        color: #29504D;
+    }
+
+    .file-upload-container.has-files .file-upload-hint {
+        color: #29504D;
+    }
+
+    /* Attendance Tracking Styling */
+    .attendance-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+        border: 2px solid #e9ecef !important;
+        border-radius: 15px !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .attendance-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #29504D 0%, #10b981 100%);
+            border-radius: 15px 15px 0 0;
+        }
+
+        .attendance-container .form-check {
+            padding: 1rem 1.25rem;
+            background: white;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+            .attendance-container .form-check::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, rgba(41, 80, 77, 0.02) 0%, rgba(16, 185, 129, 0.02) 100%);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .attendance-container .form-check:hover {
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border-color: #29504D;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(41, 80, 77, 0.15);
+            }
+
+                .attendance-container .form-check:hover::before {
+                    opacity: 1;
+                }
+
+            .attendance-container .form-check:last-child {
+                margin-bottom: 0;
+            }
+
+        .attendance-container .form-check-input {
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-top: 0.125rem;
+            margin-left: 0.5rem;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            background-color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+            .attendance-container .form-check-input:checked {
+                background-color: #29504D;
+                border-color: #29504D;
+                box-shadow: 0 0 0 3px rgba(41, 80, 77, 0.1);
+            }
+
+                .attendance-container .form-check-input:checked::after {
+                    content: '✓';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    color: white;
+                    font-size: 0.75rem;
+                    font-weight: bold;
+                }
+
+            .attendance-container .form-check-input:focus {
+                border-color: #29504D;
+                box-shadow: 0 0 0 0.25rem rgba(41, 80, 77, 0.25);
+                outline: none;
+            }
+
+            .attendance-container .form-check-input:hover:not(:checked) {
+                border-color: #29504D;
+                box-shadow: 0 0 0 2px rgba(41, 80, 77, 0.1);
+            }
+
+        .attendance-container .form-check-label {
+            color: #2c3e50;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+            .attendance-container .form-check-label strong {
+                color: #29504D;
+                font-size: 1rem;
+                display: block;
+                margin-bottom: 0.25rem;
+            }
+
+            .attendance-container .form-check-label small {
+                color: #6c757d;
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
+
+        .attendance-container .form-check:hover .form-check-label strong {
+            color: #29504D;
+        }
+
+        .attendance-container .form-check:hover .form-check-label small {
+            color: #495057;
+        }
+
+        /* Empty state styling */
+        .attendance-container .text-muted {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #6c757d !important;
+            font-style: italic;
+        }
+
+        .attendance-container .text-danger {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #dc3545 !important;
+            font-weight: 500;
+        }
+
+    /* Animation for participant items */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .participant-item {
+        animation: fadeInUp 0.3s ease forwards;
+    }
+
+    /* Participant avatar styling */
+    .participant-avatar {
+        transition: all 0.3s ease;
+    }
+
+    .form-check:hover .participant-avatar {
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(41, 80, 77, 0.3);
+    }
+
+    /* Attendance Badge Styling */
+    .attendance-badge {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        animation: attendanceGlow 2s ease-in-out infinite alternate;
+    }
+
+    @@keyframes attendanceGlow {
+        from {
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        }
+
+        to {
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.5);
+        }
+    }
+
+    /* Enhanced Attachment Styling */
+    .attachment-item-enhanced {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .attachment-item-enhanced:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(41, 80, 77, 0.15);
+            border-color: #29504D !important;
+        }
+
+    .attachment-link {
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 10;
+        cursor: pointer;
+    }
+
+        .attachment-link:hover {
+            color: #10b981 !important;
+            text-decoration: underline !important;
+        }
+
+    .file-icon {
+        transition: all 0.3s ease;
+    }
+
+    .attachment-item-enhanced:hover .file-icon {
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(41, 80, 77, 0.3);
+    }
+
+    .attachment-meta {
+        transition: color 0.3s ease;
+    }
+
+    .attachment-item-enhanced:hover .attachment-meta {
+        color: #495057 !important;
+    }
+
+    /* Ensure download buttons are clickable */
+    .btn-outline-primary {
+        position: relative;
+        z-index: 10;
+        cursor: pointer;
+        pointer-events: auto;
+    }
+</style>
+
+<!-- Floating Background Shapes -->
+<div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+</div>
+
+<div class="meeting-details-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <!-- Main Meeting Details Card -->
+                <div class="meeting-details-card">
+                    <!-- Header -->
+                    <div class="meeting-details-header">
+                        <div class="meeting-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h2 class="mb-2">@Model.Title</h2>
+                        <p class="mb-0 opacity-75">تفاصيل الاجتماع والمعلومات المرتبطة</p>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="meeting-details-body">
+
+
+
+
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <!-- Basic Information Section -->
+                                <div class="info-section">
+                                    <h4><i class="fas fa-info-circle me-2"></i>المعلومات الأساسية</h4>
+
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-calendar"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <div class="info-label">التاريخ والوقت</div>
+                                            <div class="info-value">
+                                                @Model.StartTime.ToString("dd/MM/yyyy") - @Model.StartTime.ToString("HH:mm") إلى @Model.EndTime.ToString("HH:mm")
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <div class="info-label">المكان</div>
+                                            <div class="info-value">@(Model.Location ?? "غير محدد")</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-user-tie"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <div class="info-label">المنظم</div>
+                                            <div class="info-value">@Model.OrganizerName</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Meeting Status Section -->
+                                <div class="info-section">
+                                    <h4><i class="fas fa-chart-line me-2"></i>حالة الاجتماع</h4>
+
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-flag"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <div class="info-label">الحالة</div>
+                                            <div class="info-value">
+                                                <span class="status-badge status-@(Model.Status == "Scheduled" ? "scheduled" : Model.Status == "Cancelled" ? "cancelled" : "completed")">
+                                                    @Model.Status
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <div class="info-label">الأولوية</div>
+                                            <div class="info-value">
+                                                @if (!string.IsNullOrEmpty(Model.Priority))
+                                                {
+                                                    <span class="priority-badge" style="background-color: @(Model.PriorityColor ?? "#29504D") !important;">
+                                                        @Model.Priority
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">غير محدد</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-building"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <div class="info-label">نوع الاجتماع</div>
+                                            <div class="info-value">
+                                                <span class="meeting-type-badge">
+                                                    @(Model.MeetingType == (int)MeetingTypeEnum.Internal ? "داخلي" : "خارجي")
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @*  <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-repeat"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <div class="info-label">متكرر</div>
+                                            <div class="info-value">@(Model.IsRecurring ? "نعم" : "لا")</div>
+                                        </div>
+                                    </div> *@
+                                </div>
+
+                                <!-- Additional Information Section -->
+                                @if (!string.IsNullOrEmpty(Model.Authority) || !string.IsNullOrEmpty(Model.Description) || !string.IsNullOrEmpty(Model.MeetingPoints))
+                                {
+                                    <div class="info-section">
+                                        <h4><i class="fas fa-clipboard-list me-2"></i>معلومات إضافية</h4>
+
+                                        @if (!string.IsNullOrEmpty(Model.Authority))
+                                        {
+                                            <div class="info-item">
+                                                <div class="info-icon">
+                                                    <i class="fas fa-landmark"></i>
+                                                </div>
+                                                <div class="info-content">
+                                                    <div class="info-label">الجهة</div>
+                                                    <div class="info-value">@Model.Authority</div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(Model.Description))
+                                        {
+                                            <div class="info-item">
+                                                <div class="info-icon">
+                                                    <i class="fas fa-align-right"></i>
+                                                </div>
+                                                <div class="info-content">
+                                                    <div class="info-label">الوصف</div>
+                                                    <div class="info-value">@Model.Description</div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(Model.MeetingPoints))
+                                        {
+                                            <div class="info-item">
+                                                <div class="info-icon">
+                                                    <i class="fas fa-list-check"></i>
+                                                </div>
+                                                <div class="info-content">
+                                                    <div class="info-label">نقاط الاجتماع</div>
+                                                    <div class="info-value" style="white-space: pre-wrap;">@Model.MeetingPoints</div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="col-md-4">
+                                <!-- Participants Card -->
+                                <div class="participants-card">
+                                    <div class="participants-title">
+                                        <i class="fas fa-users me-2"></i>المشاركون (@(Model.Participants?.Count ?? 0))
+                                    </div>
+                                    @if (Model.Participants != null && Model.Participants.Any())
+                                    {
+                                        @foreach (var participant in Model.Participants)
+                                        {
+                                            <div class="participant-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <div class="participant-name">@participant.UserName</div>
+                                                        <div class="participant-role">
+                                                            @participant.Name
+                                                            @if (participant.IsOrganizer)
+                                                            {
+                                                                <span class="badge bg-primary ms-2">منظم</span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex flex-column align-items-end">
+                                                        <span class="response-badge response-@(participant.ResponseStatus == ResponseStatusEnum.Accepted ? "accepted" : participant.ResponseStatus == ResponseStatusEnum.Declined ? "declined" : "pending")">
+                                                            @(participant.ResponseStatus == ResponseStatusEnum.Accepted ? "مقبول" : participant.ResponseStatus == ResponseStatusEnum.Declined ? "مرفوض" : "في الانتظار")
+                                                        </span>
+                                                        @if (participant.IsAttended)
+                                                        {
+                                                            <span class="attendance-badge mt-1">
+                                                                <i class="fas fa-check-circle me-1"></i>حضر الاجتماع
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                @if (participant.ResponseStatus == ResponseStatusEnum.Declined && !string.IsNullOrEmpty(participant.DeclinedReason))
+                                                {
+                                                    <div class="decline-reason">
+                                                        <strong>
+                                                            سبب الرفض:
+                                                            @participant.DeclinedReason
+                                                        </strong>
+                                                        @if (participant.RespondedAt.HasValue)
+                                                        {
+                                                            <br>
+                                                            <small class="text-muted">
+                                                                <i class="fas fa-clock"></i>
+                                                                @participant.RespondedAt.Value.ToString("dd/MM/yyyy HH:mm")
+                                                            </small>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="participant-item text-center">
+                                            <i class="fas fa-user-slash me-2"></i>
+                                            لا يوجد مشاركون
+                                        </div>
+                                    }
+                                </div>
+
+
+                                @if (Model.MeetingFinishNotes != null && Model.MeetingFinishNotes.Any())
+                                {
+                                    <div class="attachments-card">
+                                        <div class="attachments-title">
+                                            <i class="fas fa-clipboard-list me-2"></i>نتائج الاجتماع (@Model.MeetingFinishNotes.Count)
+                                        </div>
+                                        @foreach (var note in Model.MeetingFinishNotes.OrderByDescending(n => n.CreatedAt))
+                                        {
+                                            <div class="meeting-result-item mb-3 p-3" style="background: #f8f9fa; border-radius: 10px; border-right: 4px solid #29504D;">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h6 class="mb-0" style="color: #29504D; font-weight: 600;">
+                                                        <i class="fas fa-user me-1"></i>
+                                                        @note.CreatedBy
+                                                    </h6>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        @note.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                                    </small>
+                                                </div>
+                                                <div class="meeting-result-content" style="color: #2c5530; line-height: 1.6;">
+                                                    @note.NoteFinishContent
+                                                </div>
+                                                @if (note.Attachments != null && note.Attachments.Any())
+                                                {
+                                                    <div class="mt-3">
+                                                        <small class="text-muted mb-2 d-block">
+                                                            <i class="fas fa-paperclip me-1"></i>مرفقات النتائج (@note.Attachments.Count):
+                                                        </small>
+                                                        <div class="attachments-list">
+                                                            @foreach (var attachment in note.Attachments)
+                                                            {
+                                                                <div class="attachment-item-enhanced mb-2 p-2" style="background: white; border-radius: 8px; border: 1px solid #e9ecef; transition: all 0.3s ease;">
+                                                                    <div class="d-flex justify-content-between align-items-center">
+                                                                        <div class="d-flex align-items-center">
+                                                                            <div class="file-icon me-2" style="width: 32px; height: 32px; background: linear-gradient(135deg, #29504D 0%, #10b981 100%); border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                                                                                <i class="fas fa-file text-white" style="font-size: 0.8rem;"></i>
+                                                                            </div>
+                                                                            <div>
+                                                                                <a href="@attachment.FilePath" class="attachment-link" target="_blank" style="color: #29504D; text-decoration: none; font-weight: 600;">
+                                                                                    مرفق اجتماع
+                                                                                </a>
+                                                                                <div class="attachment-meta" style="font-size: 0.8rem; color: #6c757d;">
+                                                                                    <i class="fas fa-clock me-1"></i>@attachment.UploadedAt.ToString("dd/MM/yyyy HH:mm")
+                                                                                    <span class="mx-2">•</span>
+                                                                                    <i class="fas fa-weight me-1"></i>@((attachment.FileSize / 1024.0).Value.ToString("F1")) KB
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <a href="@attachment.FilePath" class="btn btn-sm btn-outline-primary" target="_blank" style="border-radius: 20px; padding: 0.25rem 0.75rem;">
+                                                                            <i class="fas fa-download me-1"></i>تحميل
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons Section -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                @{
+
+                                    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                                    var currentUserDeptId = User.FindFirstValue("deptId");
+                                    var isOrganizer = Model.Participants?.Any(p => p.UserId == currentUserId && p.IsOrganizer) ?? false;
+                                    var meetingTimePassed = DateTime.Now > Model.StartTime.AddMinutes(15);
+
+                                    // Check if user can edit based on department or organizer status
+                                    var isSameDepartment = Model.OrganizerDepartmentId?.ToString() == currentUserDeptId;
+
+                                    var hasRole = signInManager.Context.User.IsInRole(Roles.SuperAdmin)
+
+                                    || signInManager.Context.User.IsInRole(Roles.Admin)
+                                    || signInManager.Context.User.IsInRole(Roles.OfficeManager);
+                                    /* || signInManager.Context.User.IsInRole(Roles.Leader) */
+
+                                    var canEdit = signInManager.IsSignedIn(User) && hasRole && (isOrganizer || isSameDepartment);
+                                }
+
+                                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                                    @if (canEdit)
+                                    {
+                                        <a href="@Url.Action("Edit", "Calendar", new { id = Model.Id })" class="btn-modern btn-edit">
+                                            <i class="fas fa-edit"></i> تعديل
+                                        </a>
+
+                                        @if (isOrganizer && (Model.Status == "Scheduled" || Model.Status == "مجدول") && Model.MeetingStatusId != 2)
+                                        {
+                                            <button type="button" class="btn-modern btn-cancel" id="btnCancelMeeting">
+                                                <i class="fas fa-times"></i> إلغاء الاجتماع
+                                            </button>
+                                        }
+
+                                        @if (isOrganizer && meetingTimePassed)
+                                        {
+                                            <button type="button" class="btn-modern btn-results" id="btnAddMeetingResult">
+                                                <i class="fas fa-clipboard-list"></i> إضافة نتائج الاجتماع
+                                            </button>
+                                        }
+                                    }
+
+                                    <a href="@Url.Action("Meetings", "Calendar")" class="btn-modern btn-back">
+                                        <i class="fas fa-arrow-right"></i> العودة إلى القائمة
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Meeting Result Modal -->
+<div class="modal fade" id="meetingResultModal" tabindex="-1" aria-labelledby="meetingResultModalLabel" aria-hidden="true" dir="rtl">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header text-white border-0" style="background: #29504D !important; padding: 2rem;">
+                <h5 class="modal-title fw-bold" id="meetingResultModalLabel" style="color: white !important; font-size: 1.5rem;">
+                    <i class="fas fa-clipboard-list me-2"></i>
+                    إضافة نتائج الاجتماع
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="إغلاق" id="modalResultCloseBtn" style="font-size: 1.5rem; opacity: 0.8;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-4" style="background-color: #fafafa;">
+                <form id="meetingResultForm" enctype="multipart/form-data">
+                    <div class="mb-4">
+                        <label for="meetingResultContent" class="form-label-modern">
+                            <i class="fas fa-file-text me-1" style="color: #29504D !important;"></i>
+                            نتائج الاجتماع *
+                        </label>
+                        <textarea class="form-control-modern" id="meetingResultContent"
+                                  rows="8" placeholder="اكتب نتائج الاجتماع هنا..." required></textarea>
+                        <div class="form-text text-muted" style="margin-top: 0.5rem; font-size: 0.9rem;">
+                            <i class="fas fa-info-circle me-1"></i>
+                            اكتب ملخص شامل لنتائج الاجتماع وقراراته
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="meetingAttachments" class="form-label-modern">
+                            <i class="fas fa-paperclip me-1" style="color: #29504D !important;"></i>
+                            مرفقات (اختياري)
+                        </label>
+                        <div class="file-upload-container">
+                            <input type="file" class="file-upload-input" id="meetingAttachments" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.jpeg,.png">
+                            <label for="meetingAttachments" class="file-upload-label">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>
+                                <span class="file-upload-text">اختر الملفات أو اسحبها هنا</span>
+                                <span class="file-upload-hint">PDF, Word, Excel, PowerPoint, الصور</span>
+                            </label>
+                        </div>
+                        <div class="form-text text-muted" style="margin-top: 0.5rem; font-size: 0.9rem;">
+                            <i class="fas fa-info-circle me-1"></i>
+                            يمكنك إرفاق ملفات متعددة (PDF, Word, Excel, PowerPoint, الصور)
+                        </div>
+                    </div>
+
+                    <div id="attachmentPreview" class="mb-3"></div>
+
+                    <!-- Attendance Tracking Section -->
+                    <div class="mb-4">
+                        <label class="form-label-modern">
+                            <i class="fas fa-users me-1" style="color: #29504D !important;"></i>
+                            تتبع الحضور (اختياري)
+                        </label>
+                        <div class="attendance-container p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="attendance-icon me-2" style="width: 40px; height: 40px; background: linear-gradient(135deg, #29504D 0%, #10b981 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-user-check text-white" style="font-size: 1.1rem;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1" style="color: #29504D; font-weight: 600;">تتبع الحضور</h6>
+                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        حدد المشاركين الذين حضروا الاجتماع
+                                    </p>
+                                </div>
+                            </div>
+                            <div id="attendanceList">
+                                <!-- Attendance checkboxes will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="resultErrorMsg" class="alert alert-danger d-none mb-0" style="border-radius: 10px; border: none; padding: 12px 16px;">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span></span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 p-4" style="background-color: #f8f9fa;">
+                <button type="button" class="btn-modern btn-cancel" data-bs-dismiss="modal" id="modalResultCancelBtn">
+                    <i class="fas fa-times"></i> إلغاء
+                </button>
+                <button type="button" class="btn-modern btn-results" id="btnSaveMeetingResult">
+                    <i class="fas fa-save"></i> حفظ النتائج
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for jQuery to be available
+        function waitForJQuery() {
+            if (typeof $ !== 'undefined') {
+                // Cancel Meeting functionality
+                $('#btnCancelMeeting').on('click', function() {
+                    Swal.fire({
+                        title: 'تأكيد إلغاء الاجتماع',
+                        text: 'هل أنت متأكد من إلغاء هذا الاجتماع؟ سيتم إشعار جميع المشاركين بهذا الإجراء.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'نعم، ألغِ الاجتماع',
+                        cancelButtonText: 'رجوع'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Show loading
+                            Swal.fire({
+                                title: 'جاري الإلغاء...',
+                                text: 'يرجى الانتظار',
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+
+                            // Make AJAX call to cancel meeting
+                            $.ajax({
+                                url: '/Calendar/CancelMeeting',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                headers: {
+                                    [window.AntiForgeryHeaderName || 'X-CSRF-TOKEN']: window.AntiForgeryToken
+                                },
+                                data: JSON.stringify({ meetingId: @Model.Id }),
+                                success: function(response) {
+                                    Swal.close();
+                                    console.log('Cancel meeting response:', response);
+
+                                    if (response.success) {
+                                        Swal.fire({
+                                            title: 'تم الإلغاء!',
+                                            text: response.message,
+                                            icon: 'success',
+                                            confirmButtonText: 'حسناً'
+                                        }).then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        console.error('Cancel meeting failed:', response.message);
+                                        Swal.fire({
+                                            title: 'خطأ!',
+                                            text: response.message,
+                                            icon: 'error',
+                                            confirmButtonText: 'حسناً'
+                                        });
+                                    }
+                                },
+                                error: function(xhr) {
+                                    Swal.close();
+                                    console.error('Cancel meeting AJAX error:', xhr);
+
+                                    var errorMsg = 'حدث خطأ أثناء إلغاء الاجتماع';
+                                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                                        errorMsg = xhr.responseJSON.message;
+                                    } else if (xhr.responseText) {
+                                        errorMsg += ': ' + xhr.responseText;
+                                    }
+
+                                    Swal.fire({
+                                        title: 'خطأ!',
+                                        text: errorMsg,
+                                        icon: 'error',
+                                        confirmButtonText: 'حسناً'
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+
+                // Meeting Result functionality
+                $('#btnAddMeetingResult').on('click', function() {
+                    $('#meetingResultContent').val('');
+                    $('#meetingAttachments').val('');
+                    $('#attachmentPreview').empty();
+                    $('#resultErrorMsg').addClass('d-none');
+
+                    // Load accepted participants for attendance tracking
+                    loadAcceptedParticipants();
+
+                    $('#meetingResultModal').modal('show');
+                });
+
+                // Handle close button clicks for result modal
+                $('#modalResultCloseBtn, #modalResultCancelBtn').on('click', function() {
+                    $('#meetingResultModal').modal('hide');
+                });
+
+                // Handle file preview with validation
+                $('#meetingAttachments').on('change', function() {
+                    var files = this.files;
+                    var preview = $('#attachmentPreview');
+                    var container = $('.file-upload-container');
+                    preview.empty();
+
+                    // Allowed file types
+                    var allowedTypes = [
+                        'application/pdf',
+                        'application/msword',
+                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'application/vnd.ms-excel',
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'application/vnd.ms-powerpoint',
+                        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                        'text/plain',
+                        'image/jpeg',
+                        'image/jpg',
+                        'image/png'
+                    ];
+
+                    // Allowed file extensions
+                    var allowedExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.jpg', '.jpeg', '.png'];
+
+                    if (files.length > 0) {
+                        // Add has-files class for styling
+                        container.addClass('has-files');
+
+                        preview.append('<h6 class="mb-2"><i class="fas fa-files me-1"></i> الملفات المحددة:</h6>');
+
+                        var hasInvalidFiles = false;
+                        var maxFileSize = 10 * 1024 * 1024; // 10MB max file size
+
+                        $.each(files, function(index, file) {
+                            var fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                            var isValidType = allowedTypes.includes(file.type) || allowedExtensions.includes(fileExtension);
+                            var isValidSize = file.size <= maxFileSize;
+
+                            if (isValidType && isValidSize) {
+                                preview.append('<div class="alert alert-success py-2 mb-2"><i class="fas fa-check-circle me-2"></i>' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)</div>');
+                            } else {
+                                hasInvalidFiles = true;
+                                var errorMsg = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+                                if (!isValidType) {
+                                    errorMsg += ' - نوع الملف غير مدعوم';
+                                }
+                                if (!isValidSize) {
+                                    errorMsg += ' - حجم الملف كبير جداً (الحد الأقصى 10MB)';
+                                }
+                                preview.append('<div class="alert alert-danger py-2 mb-2"><i class="fas fa-exclamation-triangle me-2"></i>' + errorMsg + '</div>');
+                            }
+                        });
+
+                        if (hasInvalidFiles) {
+                            preview.append('<div class="alert alert-warning py-2 mb-2"><i class="fas fa-info-circle me-2"></i>يرجى إزالة الملفات غير المدعومة قبل المتابعة</div>');
+                        }
+                    } else {
+                        // Remove has-files class when no files selected
+                        container.removeClass('has-files');
+                    }
+                });
+
+                // Load accepted participants for attendance tracking
+                function loadAcceptedParticipants() {
+                    var attendanceList = $('#attendanceList');
+
+                    // Show loading state
+                    attendanceList.html(`
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem;">
+                                <span class="visually-hidden">جاري التحميل...</span>
+                            </div>
+                            <p class="text-muted mt-2 mb-0">جاري تحميل قائمة المشاركين...</p>
+                        </div>
+                    `);
+
+                    $.ajax({
+                        url: '/Calendar/GetAcceptedParticipants',
+                        type: 'GET',
+                        data: { meetingId: @Model.Id },
+                        success: function(response) {
+                            if (response.success) {
+                                attendanceList.empty();
+
+                                if (response.participants && response.participants.length > 0) {
+                                    // Add a subtle animation for each participant
+                                    response.participants.forEach(function(participant, index) {
+                                        var isChecked = participant.isAttended ? 'checked' : '';
+                                        var checkboxHtml = `
+                                            <div class="form-check participant-item" style="opacity: 0; transform: translateY(10px); animation: fadeInUp 0.3s ease forwards; animation-delay: ${index * 0.1}s;">
+                                                <input class="form-check-input attendance-checkbox" type="checkbox"
+                                                       value="${participant.userId}" id="attendance_${participant.userId}" ${isChecked}>
+                                                <label class="form-check-label" for="attendance_${participant.userId}">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="participant-avatar me-2" style="width: 32px; height: 32px; background: linear-gradient(135deg, #29504D 0%, #10b981 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">
+                                                            ${participant.name.charAt(0)}
+                                                        </div>
+                                                        <div>
+                                                            <strong>${participant.name}</strong>
+                                                            <small class="text-muted d-block">${participant.userName}</small>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        `;
+                                        attendanceList.append(checkboxHtml);
+                                    });
+                                } else {
+                                    attendanceList.html(`
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-users text-muted" style="font-size: 2rem; opacity: 0.5;"></i>
+                                            <p class="text-muted mt-2 mb-0">لا يوجد مشاركون مقبولون</p>
+                                        </div>
+                                    `);
+                                }
+                            }
+                        },
+                        error: function() {
+                            attendanceList.html(`
+                                <div class="text-center py-4">
+                                    <i class="fas fa-exclamation-triangle text-danger" style="font-size: 2rem; opacity: 0.5;"></i>
+                                    <p class="text-danger mt-2 mb-0">خطأ في تحميل قائمة المشاركين</p>
+                                </div>
+                            `);
+                        }
+                    });
+                }
+
+                // Save meeting result
+                $('#btnSaveMeetingResult').on('click', function() {
+                    var resultContent = $('#meetingResultContent').val().trim();
+
+                    if (!resultContent) {
+                        $('#resultErrorMsg span').text('يرجى إدخال نتائج الاجتماع');
+                        $('#resultErrorMsg').removeClass('d-none');
+                        return;
+                    }
+
+                    // Validate files before submission
+                    var files = $('#meetingAttachments')[0].files;
+                    var allowedTypes = [
+                        'application/pdf',
+                        'application/msword',
+                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'application/vnd.ms-excel',
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'application/vnd.ms-powerpoint',
+                        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                        'text/plain',
+                        'image/jpeg',
+                        'image/jpg',
+                        'image/png'
+                    ];
+                    var allowedExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.jpg', '.jpeg', '.png'];
+                    var maxFileSize = 10 * 1024 * 1024; // 10MB
+
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        var fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                        var isValidType = allowedTypes.includes(file.type) || allowedExtensions.includes(fileExtension);
+                        var isValidSize = file.size <= maxFileSize;
+
+                        if (!isValidType) {
+                            $('#resultErrorMsg span').text('نوع الملف غير مدعوم: ' + file.name);
+                            $('#resultErrorMsg').removeClass('d-none');
+                            return;
+                        }
+
+                        if (!isValidSize) {
+                            $('#resultErrorMsg span').text('حجم الملف كبير جداً: ' + file.name + ' (الحد الأقصى 10MB)');
+                            $('#resultErrorMsg').removeClass('d-none');
+                            return;
+                        }
+                    }
+
+                    // Disable button to prevent double submission
+                    $(this).prop('disabled', true);
+
+                    var formData = new FormData();
+                    formData.append('meetingId', @Model.Id);
+                    formData.append('resultContent', resultContent);
+
+                    // Add files
+                    var files = $('#meetingAttachments')[0].files;
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append('attachments', files[i]);
+                    }
+
+                    // Add attendance data
+                    var attendanceData = [];
+                    $('.attendance-checkbox:checked').each(function() {
+                        attendanceData.push({
+                            userId: $(this).val(),
+                            isAttended: true
+                        });
+                    });
+                    formData.append('attendanceData', JSON.stringify(attendanceData));
+
+                    $.ajax({
+                        url: '/Calendar/SaveMeetingResult',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            [window.AntiForgeryHeaderName || 'X-CSRF-TOKEN']: window.AntiForgeryToken
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: 'تم الحفظ!',
+                                    text: response.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'حسناً'
+                                }).then(() => {
+                                    $('#meetingResultModal').modal('hide');
+                                    location.reload();
+                                });
+                            } else {
+                                $('#resultErrorMsg span').text(response.message);
+                                $('#resultErrorMsg').removeClass('d-none');
+                            }
+                            $('#btnSaveMeetingResult').prop('disabled', false);
+                        },
+                        error: function(xhr) {
+                            var errorMsg = 'حدث خطأ أثناء حفظ النتائج';
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMsg = xhr.responseJSON.message;
+                            }
+                            $('#resultErrorMsg span').text(errorMsg);
+                            $('#resultErrorMsg').removeClass('d-none');
+                            $('#btnSaveMeetingResult').prop('disabled', false);
+                        }
+                    });
+                });
+
+                // Handle Enter key in result content
+                $('#meetingResultContent').on('keypress', function(e) {
+                    if (e.which === 13 && e.ctrlKey) { // Ctrl+Enter
+                        e.preventDefault();
+                        $('#btnSaveMeetingResult').click();
+                    }
+                });
+            } else {
+                // Retry after a short delay if jQuery not ready
+                setTimeout(waitForJQuery, 100);
+            }
+        }
+
+        waitForJQuery();
+    });
+</script>
+
+<style>
+    /* Modal hover effects */
+    #meetingResultModal .btn-close:hover {
+        opacity: 1;
+        transform: scale(1.1);
+        transition: all 0.2s ease;
+    }
+
+    #meetingResultModal .btn-modern:disabled {
+        opacity: 0.6;
+        transform: none;
+        cursor: not-allowed;
+    }
+
+    /* Responsive button layout */
+    @@media (max-width: 768px) {
+        .d-flex.gap-3 {
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+
+        .btn-modern {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+    }
+</style>

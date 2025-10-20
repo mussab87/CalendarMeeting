@@ -1,0 +1,117 @@
+﻿@model RoleClaimsDto
+
+<!-- Button trigger modal-->
+<!-- Modal-->
+<form asp-controller="Admin" asp-action="AddPermissions" method="post" data-ajax="true" data-ajax-method="post" data-ajax-update="#resultMessage" data-ajax-success="onUserAdded">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="exampleModalLabel">
+                صلاحيات الشاشات
+            </h2>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i aria-hidden="true" class="ki ki-close"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!--begin::Container-->
+            <div class="container">
+                <!--begin::Card-->
+                <div class="card card-custom card-transparent">
+                    <div class="card-body p-0">
+                        <!--begin::Wizard-->
+                        <div class="wizard wizard-4">
+                            <!--begin::Card-->
+                            <div class="card card-custom card-shadowless rounded-top-0">
+                                <div class="accordion accordion-solid accordion-toggle-plus" id="accordionExample6">
+                                    <input type="hidden" asp-for="RoleId" />
+                                    <div class="text-center pb-8">
+                                        <div class="text-danger" id="errorAdd" style="font-size: 16px">
+                                        </div>
+                                    </div>
+
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <div class="card-title" data-toggle="collapse" data-target="#roleClaimInformation">
+                                                <i class="flaticon2-user"></i>
+                                                &nbsp;&nbsp;
+                                                <h3>
+                                                    @Model.RoleName - @Model.RoleNameArabic
+                                                </h3>
+                                            </div>
+                                        </div>
+                                        <div id="roleClaimInformation" class="collapse show" data-parent="#accordionExample6">
+                                            <div class="card-body p-0" style="max-height: 600px;overflow-y: auto;overflow-x: hidden; max-width:100%">
+                                                <div class="row justify-content-center py-8 px-8 py-lg-15 px-lg-10">
+                                                    <div class="col-xl-12 col-xxl-10">
+                                                        <!--begin::Wizard Form-->
+
+                                                        <div class="row justify-content-center">
+                                                            <div class="col-xl-12">
+                                                                <!--begin::Wizard Step 1-->
+                                                                <div class="my-5 step">
+                                                                    <div class="form-group row">
+                                                                        <div asp-validation-summary="All" class="text-danger"></div>
+                                                                        @if (TempData["Success"] != null)
+                                                                        {
+                                                                            <div class="text-success" data-valmsg-summary="true">
+                                                                                <ul>
+                                                                                    <li>
+                                                                                        @TempData["Success"]
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+                                                                    <div class="form-group row">
+
+                                                                        @for (int i = 0; i < Model.Cliams.Count; i++)
+                                                                        {
+                                                                            <div class="col-lg-12 col-xl-6">
+                                                                                <input type="hidden" asp-for="@Model.Cliams[i].ClaimValue" />
+                                                                                <label class="checkbox">
+                                                                                    <input asp-for="@Model.Cliams[i].IsSelected">
+                                                                                    <span></span>
+                                                                                    <text style="margin-right: 8px;">
+                                                                                        @Model.Cliams[i].ClaimNameArabic @Model.Cliams[i].ClaimValue
+                                                                                    </text>
+                                                                                </label>
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+
+
+                                                                </div>
+                                                                <!--end::Wizard Step 1-->
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Wizard Form-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--begin::Body-->
+                                <!--end::Body-->
+                            </div>
+                            <!--end::Card-->
+                        </div>
+                        <!--end::Wizard-->
+                    </div>
+                </div>
+                <!--end::Card-->
+            </div>
+            <!--end::Container-->
+        </div>
+        <div class="modal-footer" style="text-align: right; direction: ltr;">
+            <button type="button" class="btn btn-danger font-weight-bold" data-dismiss="modal" style="border-radius: 8px; padding: 10px 20px;">
+                <i class="fas fa-times me-2"></i>
+                رجوع
+            </button>
+            <button type="submit" class="btn btn-success font-weight-bolder" style="background: #29504D !important; color: white !important; border: none; border-radius: 8px; padding: 10px 25px; margin-right: 8px;">
+                <i class="fas fa-save me-2"></i>
+                حفظ
+            </button>
+        </div>
+    </div>
+</form>
