@@ -15,7 +15,8 @@
         </div>
     </div>
     <div class="divider"></div>
-    <div class="split-right fade-slide-in" id="loginForm">
+    
+    <div class="split-right fade-slide-in" id="loginForm" style="margin-top: 186px;min-height: 300px;">
         <form asp-controller="Account" asp-action="Login" method="post" autocomplete="off">
             <!-- important: emits the __RequestVerificationToken hidden input -->
             @Html.AntiForgeryToken()
@@ -40,10 +41,10 @@
             <div class="form-group" style="margin-bottom: 1.5rem;">
                 <label class="font-size-h6 font-weight-bolder text-primary" style="display:block; text-align:right;">رمز التحقق</label>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <img src="@Url.Action("Captcha", "Account")" id="captchaImage" alt="رمز التحقق" style="height: 38px; border-radius: 10px; border: 1.5px solid #ccc; background: #fafafa;" />
                     <a href="javascript:void(0);" onclick="reloadCaptcha()" tabindex="-1" style="background: none; border: none; cursor: pointer; padding: 0; margin-left: 0.3rem;">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#29504D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.51 7.13M3 19a9 9 0 0 0 14.36 1.36"></path></svg>
                     </a>
-                    <img src="@Url.Action("Captcha", "Account")" id="captchaImage" alt="رمز التحقق" style="height: 38px; border-radius: 10px; border: 1.5px solid #ccc; background: #fafafa;" />
                 </div>
             </div>
             <div class="form-floating">

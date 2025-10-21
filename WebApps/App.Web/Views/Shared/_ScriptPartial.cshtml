@@ -229,6 +229,78 @@
                 }
             }
         });
+        
+        // Enhanced mobile menu functionality
+        const mobileToggle = document.getElementById('kt_header_mobile_toggle');
+        const menuWrapper = document.getElementById('kt_header_menu_wrapper');
+        const menuItems = document.querySelectorAll('.header-menu-mobile .menu-item');
+        
+        // Add smooth animations to menu items
+        if (menuItems.length > 0) {
+            menuItems.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.1}s`;
+                item.classList.add('animate-in');
+            });
+        }
+        
+        // Enhanced toggle functionality
+        if (mobileToggle && menuWrapper) {
+            mobileToggle.addEventListener('click', function() {
+                // Add loading state
+                menuWrapper.classList.add('loading');
+                
+                setTimeout(() => {
+                    menuWrapper.classList.remove('loading');
+                    menuWrapper.classList.toggle('show');
+                    
+                    // Update burger icon state
+                    mobileToggle.classList.toggle('burger-icon-active');
+                    
+                    // Add body scroll lock when menu is open
+                    if (menuWrapper.classList.contains('show')) {
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        document.body.style.overflow = '';
+                    }
+                }, 100);
+            });
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (menuWrapper && menuWrapper.classList.contains('show')) {
+                if (!menuWrapper.contains(e.target) && !mobileToggle.contains(e.target)) {
+                    menuWrapper.classList.remove('show');
+                    mobileToggle.classList.remove('burger-icon-active');
+                    document.body.style.overflow = '';
+                }
+            }
+        });
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && menuWrapper && menuWrapper.classList.contains('show')) {
+                menuWrapper.classList.remove('show');
+                mobileToggle.classList.remove('burger-icon-active');
+                document.body.style.overflow = '';
+            }
+        });
+        
+        // Enhanced menu item interactions
+        if (menuItems.length > 0) {
+            menuItems.forEach(item => {
+                const link = item.querySelector('.menu-link');
+                if (link) {
+                    link.addEventListener('click', function() {
+                        // Add click animation
+                        item.classList.add('clicked');
+                        setTimeout(() => {
+                            item.classList.remove('clicked');
+                        }, 200);
+                    });
+                }
+            });
+        }
     });
 </script>
 

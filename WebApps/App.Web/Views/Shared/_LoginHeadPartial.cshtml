@@ -90,7 +90,8 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            position: relative;
+            position: relative;   
+            min-height: auto;         
         }
 
         .split-left {
@@ -99,6 +100,7 @@
             position: relative;
             overflow: hidden;
             animation: leftIn 1.2s cubic-bezier(.4,2,.6,1);
+            min-height: auto;
         }
 
         @@keyframes leftIn {
@@ -117,6 +119,7 @@
             background: #fff;
             padding: 3rem 2.5rem 2.5rem 2.5rem;
             animation: rightIn 1.2s cubic-bezier(.4,2,.6,1);
+            min-height: auto;
         }
 
         @@keyframes rightIn {
@@ -482,7 +485,451 @@
                 transform: translateY(0);
             }
         }
+
+        /* Responsive layout for minimize/maximize */
+        @@media (max-width: 1200px) {
+            .split-container {
+                width: 95vw;
+                max-width: 95vw;
+            }
+        }
+
+        @@media (max-width: 1000px) {
+            .split-container {
+                width: 98vw;
+                max-width: 98vw;
+            }
+        }
+
+        @@media (max-width: 900px) {
+            .split-container {
+                flex-direction: column;
+                width: 98vw;
+                min-height: 0;
+            }
+
+            .divider {
+                display: none;
+            }
+
+            .split-left, .split-right {
+                width: 100%;
+                min-height: 220px;
+            }
+
+            .split-right {
+                padding: 2rem 1rem;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .split-container {
+                width: 98vw;
+                margin: 0.5rem;
+                border-radius: 1.2rem;
+            }
+
+            .split-right {
+                padding: 1.5rem 1rem;
+            }
+
+            .form-floating input {
+                width: 100%;
+                min-width: 200px;
+                font-size: 1rem;
+                height: 2.6rem;
+                line-height: 2.6rem;
+            }
+
+            .form-floating label {
+                font-size: 1rem;
+                right: 1.2rem;
+                top: 1rem;
+            }
+
+            .form-floating input:focus + label,
+            .form-floating input:not(:placeholder-shown) + label {
+                top: -0.9rem;
+                right: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .login-title {
+                font-size: 1.5rem;
+            }
+
+            .login-desc {
+                font-size: 0.95rem;
+                margin-bottom: 1.8rem;
+            }
+
+            .btn {
+                font-size: 1rem;
+                padding: 0.9rem 0;
+            }
+        }
+
+        @@media (max-width: 500px) {
+            .split-container {
+                width: 100vw;
+                margin: 0;
+                border-radius: 0;
+                min-height: 100vh;
+                border: none;
+            }
+
+            .split-left {
+                min-height: 180px;
+                padding: 1rem;
+            }
+
+            .split-right {
+                padding: 1.2rem 0.8rem;
+                flex: 1;
+            }
+
+            .form-floating {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-floating input {
+                width: 100%;
+                min-width: 180px;
+                font-size: 0.95rem;
+                height: 2.4rem;
+                line-height: 2.4rem;
+                padding-right: 2.5rem;
+                padding-left: 0.8rem;
+            }
+
+            .form-floating label {
+                font-size: 0.95rem;
+                right: 1rem;
+                top: 0.9rem;
+            }
+
+            .form-floating input:focus + label,
+            .form-floating input:not(:placeholder-shown) + label {
+                top: -0.8rem;
+                right: 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .login-title {
+                font-size: 1.3rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .login-desc {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .btn {
+                font-size: 0.95rem;
+                padding: 0.8rem 0;
+                margin-bottom: 0.9rem;
+            }
+        }
+
+        @@media (max-width: 360px) {
+            .split-right {
+                padding: 1rem 0.6rem;
+            }
+
+            .form-floating input {
+                font-size: 0.9rem;
+                height: 2.2rem;
+                line-height: 2.2rem;
+            }
+
+            .login-title {
+                font-size: 1.2rem;
+            }
+
+            .login-desc {
+                font-size: 0.85rem;
+            }
+
+            .btn {
+                font-size: 0.9rem;
+                padding: 0.7rem 0;
+            }
+        }
+
+        /* Prevent layout issues on window resize */
+        @@media (min-width: 501px) {
+            .split-container {
+                min-height: 600px;
+            }
+
+            .split-right {
+                min-height: 400px;
+            }
+        }
+
+        /* Ensure form elements stay visible during resize */
+        .form-floating {
+            opacity: 1;
+            visibility: visible;
+            display: block;
+        }
+
+        /* Smooth transitions for responsive changes */
+        .split-container,
+        .split-left,
+        .split-right {
+            transition: all 0.3s ease;
+        }
+
+        /* Fix height issues - ensure all content appears */
+        html, body {
+            height: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .split-container {
+            min-height: auto;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Mobile height fixes */
+        @@media (max-width: 500px) {
+            body {
+                min-height: 100vh;
+                padding: 0;
+                margin: 0;
+            }
+
+            .split-container {
+                min-height: 100vh;
+                max-height: none;
+                height: auto;
+                overflow-y: visible;
+            }
+
+            .split-left {
+                min-height: auto;
+                height: auto;
+            }
+
+            .split-right {
+                min-height: auto;
+                height: auto;
+                flex: none;
+            }
+        }
+
+        /* Ensure content fits in viewport */
+        @@media (max-height: 600px) {
+            .split-container {
+                max-height: 100vh;
+                overflow-y: auto;
+            }
+        }
+
+        /* Prevent content from being cut off */
+        .split-right {
+            padding-bottom: 2rem;
+        }
+
+        @@media (max-width: 500px) {
+            .split-right {
+                padding-bottom: 3rem;
+            }
+        }
+
+        /* Add responsive line breaks for small screens only */
+        @@media (max-width: 500px) {
+            .divider::after {
+                content: "\A\A\A\A";
+                white-space: pre;
+                display: block;
+            }
+        }
+
+        /* Remove line breaks in normal mode */
+        @@media (min-width: 501px) {
+            .divider::after {
+                content: "";
+                display: none;
+            }
+        }
+
+        /* Add margin-top to form for responsive mode */
+        /* @@media (max-width: 500px) {
+            form {
+                margin-top: 250px;
+            }
+        } */
+
+        /* Remove margin-top in normal mode */
+        /* @@media (min-width: 501px) {
+            form {
+                margin-top: 0;
+            }
+        } */
+
+        /* Dynamic height calculation for split containers */
+        @@media (max-width: 900px) {
+            .split-left {
+                min-height: calc(50vh + 30px);
+                height: auto;
+                max-height: 60vh;
+            }
+            
+            .split-right {
+                min-height: calc(50vh - 30px);
+                height: auto;
+                max-height: none;
+                margin-top: -40px;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .split-left {
+                min-height: calc(55vh + 25px);
+                height: auto;
+                max-height: 65vh;
+            }
+            
+            .split-right {
+                min-height: calc(45vh - 25px);
+                height: auto;
+                max-height: none;
+                margin-top: -50px;
+            }
+        }
+
+        @@media (max-width: 500px) {
+            .split-left {
+                min-height: calc(60vh + 20px);
+                height: auto;
+                max-height: 70vh;
+            }
+            
+            .split-right {
+                min-height: calc(40vh - 20px);
+                height: auto;
+                max-height: none;
+                flex: 1;
+                padding-bottom: 17rem;
+                margin-top: -60px;
+            }
+        }
+
+        @@media (max-width: 360px) {
+            .split-left {
+                min-height: calc(65vh + 15px);
+                height: auto;
+                max-height: 75vh;
+            }
+            
+            .split-right {
+                min-height: calc(35vh - 15px);
+                height: auto;
+                max-height: none;
+                flex: 1;
+                padding-bottom: 17rem;
+                margin-top: -70px;
+            }
+        }
+
+        /* Ensure proper height distribution on larger screens */
+        @@media (min-width: 901px) {
+            .split-left {
+                min-height: 50vh;
+                height: auto;
+            }
+            
+            .split-right {
+                min-height: 50vh;
+                height: auto;
+            }
+        }
     </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add focus and blur event listeners to form inputs
+            const inputs = document.querySelectorAll('.form-floating input');
+            
+            inputs.forEach(input => {
+                // Add focused class on focus
+                input.addEventListener('focus', function() {
+                    this.classList.add('focused');
+                });
+                
+                // Remove focused class on blur if no value
+                input.addEventListener('blur', function() {
+                    if (!this.value.trim()) {
+                        this.classList.remove('focused');
+                    }
+                });
+                
+                // Add has-value class if input has value
+                input.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        this.classList.add('has-value');
+                    } else {
+                        this.classList.remove('has-value');
+                    }
+                });
+                
+                // Check for autofill on page load
+                if (input.value.trim()) {
+                    input.classList.add('has-value');
+                }
+            });
+
+            // Dynamic form positioning based on upper section height (mobile only)
+            function adjustFormPosition() {
+                const splitLeft = document.querySelector('.split-left');
+                const splitRight = document.querySelector('.split-right');
+                
+                if (splitLeft && splitRight) {
+                    // Only apply dynamic positioning on mobile devices
+                    if (window.innerWidth <= 900) {
+                        // Get the actual height of the upper section
+                        const upperSectionHeight = splitLeft.offsetHeight;
+                        
+                        // Set the form position dynamically
+                        splitRight.style.marginTop = upperSectionHeight + 'px';
+                        
+                        // Ensure the form has proper minimum height
+                        const viewportHeight = window.innerHeight;
+                        const remainingHeight = viewportHeight - upperSectionHeight;
+                        
+                        if (remainingHeight > 0) {
+                            splitRight.style.minHeight = Math.max(remainingHeight, 300) + 'px';
+                        }
+                    } else {
+                        // Reset to normal layout for desktop
+                        splitRight.style.marginTop = '';
+                        splitRight.style.minHeight = '';
+                    }
+                }
+            }
+
+            // Run on load and resize
+            adjustFormPosition();
+            window.addEventListener('resize', adjustFormPosition);
+            
+            // Also run after a short delay to ensure all content is loaded
+            setTimeout(adjustFormPosition, 100);
+        });
+    </script>
 
 </head>
 <!--نهاية::الرأس-->

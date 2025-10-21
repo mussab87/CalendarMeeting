@@ -68,7 +68,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseWebSockets();
 app.UseCors("AllowAll");
 
 using (var scope = app.Services.CreateScope())

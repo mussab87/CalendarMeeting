@@ -181,21 +181,314 @@
             border-color: #28a745 !important;
         }
 
-        /* Responsive adjustments */
+        /* Mobile Responsive Calendar */
         @@media (max-width: 768px) {
+            /* Calendar container adjustments */
+            .card-body {
+                padding: 0.5rem !important;
+            }
+            
+            .container-fluid {
+                padding: 0.25rem !important;
+            }
+            
+            /* Calendar grid mobile layout */
             .fc-daygrid-day {
-                min-height: 80px !important;
-                height: 80px !important;
+                min-height: 60px !important;
+                height: 60px !important;
+                font-size: 11px !important;
             }
 
             .fc-daygrid-day-frame {
-                min-height: 80px !important;
-                height: 80px !important;
+                min-height: 60px !important;
+                height: 60px !important;
+            }
+            
+            /* Day numbers */
+            .fc-daygrid-day-number {
+                font-size: 11px !important;
+                padding: 2px !important;
+                font-weight: 600 !important;
+            }
+            
+            /* Events on mobile */
+            .fc-event {
+                font-size: 8px !important;
+                max-height: 25px !important;
+                min-height: 20px !important;
+                padding: 2px 4px !important;
+                margin: 1px 2px !important;
+                line-height: 1.1 !important;
+                border-radius: 4px !important;
+            }
+            
+            .fc-event-title {
+                font-size: 8px !important;
+                line-height: 1.1 !important;
+                font-weight: 600 !important;
+            }
+            
+            .fc-event-time {
+                font-size: 7px !important;
+                opacity: 0.8 !important;
+            }
+            
+            /* Hide some elements on mobile */
+            .fc-toolbar-title {
+                font-size: 14px !important;
+                margin: 0.25rem 0 !important;
+            }
+            
+            .fc-button {
+                font-size: 10px !important;
+                padding: 0.25rem 0.5rem !important;
+                margin: 0.1rem !important;
+            }
+            
+            .fc-button-group {
+                margin: 0.1rem !important;
+            }
+            
+            /* Calendar header adjustments */
+            .fc-header-toolbar {
+                margin-bottom: 0.5rem !important;
+                flex-wrap: wrap !important;
+            }
+            
+            .fc-toolbar-chunk {
+                margin: 0.1rem !important;
+            }
+            
+            /* Week and day view mobile adjustments */
+            .fc-timegrid-event {
+                font-size: 8px !important;
+                padding: 1px 3px !important;
+                min-height: 15px !important;
+            }
+            
+            .fc-timegrid-event .fc-event-title {
+                font-size: 8px !important;
+                line-height: 1.1 !important;
+            }
+            
+            .fc-timegrid-event .fc-event-time {
+                font-size: 7px !important;
+            }
+            
+            /* Mobile-specific layout adjustments */
+            .row {
+                margin: 0 !important;
+            }
+            
+            .col-md-3, .col-md-9 {
+                padding: 0.25rem !important;
+            }
+            
+            /* Sidebar mobile adjustments */
+            .col-md-3 .card {
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .col-md-3 .card-header {
+                padding: 0.5rem !important;
+                font-size: 12px !important;
+            }
+            
+            .col-md-3 .list-group-item {
+                padding: 0.5rem !important;
+                font-size: 11px !important;
+            }
+            
+            /* Print section mobile adjustments */
+            .row.align-items-center {
+                margin: 0.25rem 0 !important;
+            }
+            
+            .col-md-4, .col-md-3 {
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .form-control-sm {
+                font-size: 11px !important;
+                padding: 0.25rem 0.5rem !important;
+            }
+            
+            .btn-sm {
+                font-size: 10px !important;
+                padding: 0.25rem 0.5rem !important;
+            }
+            
+            /* Tooltip adjustments for mobile */
+            .tooltip {
+                font-size: 10px !important;
+                max-width: 250px !important;
+            }
+            
+            .tooltip-inner {
+                padding: 8px 12px !important;
+                font-size: 10px !important;
+            }
+        }
+        
+        /* Extra small mobile devices */
+        @@media (max-width: 480px) {
+            .fc-daygrid-day {
+                min-height: 50px !important;
+                height: 50px !important;
             }
 
+            .fc-daygrid-day-frame {
+                min-height: 50px !important;
+                height: 50px !important;
+            }
+            
             .fc-event {
+                font-size: 7px !important;
+                max-height: 20px !important;
+                min-height: 15px !important;
+                padding: 1px 2px !important;
+                margin: 0.5px 1px !important;
+            }
+            
+            .fc-event-title {
+                font-size: 7px !important;
+            }
+            
+            .fc-event-time {
+                font-size: 6px !important;
+            }
+            
+            .fc-daygrid-day-number {
                 font-size: 10px !important;
-                max-height: 40px !important;
+                padding: 1px !important;
+            }
+            
+            .fc-toolbar-title {
+                font-size: 12px !important;
+            }
+            
+            .fc-button {
+                font-size: 9px !important;
+                padding: 0.2rem 0.4rem !important;
+            }
+            
+            /* Hide some toolbar elements on very small screens */
+            .fc-toolbar-chunk:last-child {
+                display: none !important;
+            }
+        }
+        
+        /* Landscape mobile orientation */
+        @@media (max-width: 768px) and (orientation: landscape) {
+            .fc-daygrid-day {
+                min-height: 45px !important;
+                height: 45px !important;
+            }
+
+            .fc-daygrid-day-frame {
+                min-height: 45px !important;
+                height: 45px !important;
+            }
+            
+            .fc-event {
+                font-size: 7px !important;
+                max-height: 18px !important;
+            }
+        }
+        
+        /* Mobile touch improvements */
+        @@media (max-width: 768px) {
+            /* Make events more touch-friendly */
+            .fc-event {
+                cursor: pointer !important;
+                user-select: none !important;
+                -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1) !important;
+                transition: all 0.2s ease !important;
+            }
+            
+            .fc-event:active {
+                transform: scale(0.95) !important;
+                opacity: 0.8 !important;
+            }
+            
+            /* Improve button touch targets */
+            .fc-button {
+                min-height: 44px !important;
+                min-width: 44px !important;
+                touch-action: manipulation !important;
+            }
+            
+            /* Better spacing for mobile */
+            .fc-daygrid-day-events {
+                margin: 1px !important;
+            }
+            
+            /* Mobile-specific calendar container */
+            #calendar {
+                touch-action: pan-x pan-y !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            
+            /* Hide some toolbar elements on mobile to save space */
+            .fc-toolbar-chunk:first-child .fc-button:not(:first-child) {
+                display: none !important;
+            }
+            
+            /* Mobile menu styling */
+            #mobileMenu .list-group-item {
+                border: none !important;
+                border-bottom: 1px solid #dee2e6 !important;
+            }
+            
+            #mobileMenu .list-group-item:last-child {
+                border-bottom: none !important;
+            }
+            
+            /* Mobile print section improvements */
+            .row.align-items-center .col-md-4,
+            .row.align-items-center .col-md-3 {
+                margin-bottom: 0.5rem !important;
+            }
+            
+            /* Mobile card adjustments */
+            .card {
+                border-radius: 8px !important;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+            }
+            
+            .card-header {
+                border-radius: 8px 8px 0 0 !important;
+            }
+        }
+        
+        /* Very small screens - optimize further */
+        @@media (max-width: 360px) {
+            .fc-toolbar-title {
+                font-size: 11px !important;
+            }
+            
+            .fc-button {
+                font-size: 8px !important;
+                padding: 0.15rem 0.3rem !important;
+            }
+            
+            .fc-daygrid-day {
+                min-height: 45px !important;
+                height: 45px !important;
+            }
+            
+            .fc-event {
+                font-size: 6px !important;
+                max-height: 15px !important;
+                min-height: 12px !important;
+            }
+            
+            .fc-event-title {
+                font-size: 6px !important;
+            }
+            
+            .fc-event-time {
+                font-size: 5px !important;
             }
         }
 
@@ -363,7 +656,8 @@
                             <main role="main" class="pb-3">
                                 <div class="container-fluid mt-4">
                                     <div class="row">
-                                        <div class="col-md-3 mb-4">
+                                        <!-- Mobile: Hide sidebar on small screens, show on larger screens -->
+                                        <div class="col-md-3 mb-4 d-none d-md-block">
                                             <div class="card">
                                                 <div class="card-header bg-primary text-white">
                                                     <h5 class="mb-0">القائمة الرئيسية</h5>
@@ -389,11 +683,41 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-9">
+                                        <!-- Mobile: Full width on small screens, 9 columns on larger screens -->
+                                        <div class="col-12 col-md-9">
                                             <div class="card">
-                                                <div class="card-header bg-info text-white">
+                                                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
                                                     <h5 class="mb-0">التقويم الشهري</h5>
+                                                    <!-- Mobile menu button for small screens -->
+                                                    <button class="btn btn-outline-light btn-sm d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu" aria-expanded="false" aria-controls="mobileMenu">
+                                                        <i class="fas fa-bars"></i> القائمة
+                                                    </button>
                                                 </div>
+                                                
+                                                <!-- Mobile menu (collapsible) -->
+                                                <div class="collapse d-md-none" id="mobileMenu">
+                                                    <div class="card-body bg-light">
+                                                        <div class="list-group list-group-flush">
+                                                            <a href="@Url.Action("Today", "Calendar")" class="list-group-item list-group-item-action">
+                                                                <i class="fas fa-calendar-day"></i> اجتماعات اليوم
+                                                            </a>
+                                                            <a href="@Url.Action("Meetings", "Calendar")" class="list-group-item list-group-item-action">
+                                                                <i class="fas fa-calendar-alt"></i> جميع الاجتماعات
+                                                            </a>
+                                                            @if (signInManager.IsSignedIn(User) && (signInManager.Context.User.IsInRole(Roles.SuperAdmin)
+                                                                                                            || signInManager.Context.User.IsInRole(Roles.Admin)
+                                                                                                            || signInManager.Context.User.IsInRole(Roles.OfficeManager)
+                                                                                                            //|| signInManager.Context.User.IsInRole(Roles.Leader)
+                                                                                                            ))
+                                                            {
+                                                                <a href="@Url.Action("Create", "Calendar")" class="list-group-item list-group-item-action">
+                                                                    <i class="fas fa-plus-circle"></i> إنشاء اجتماع جديد
+                                                                </a>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
                                                 <div class="card-body">
                                                     <div id="calendar"></div>
                                                 </div>
@@ -450,9 +774,6 @@
             // eventBorderColor: '#0056b3',
             // Enhanced event rendering for all views
             eventDidMount: function(info) {
-                // Debug: Log the priority information
-                console.log('Event:', info.event.title, 'Priority:', info.event.extendedProps.priority, 'View:', info.view.type);
-
                 // Determine priority level and colors
                 var priority = info.event.extendedProps.priority;
                 var priorityLevel = 'low';
@@ -460,30 +781,23 @@
                 var borderColor = '#229954';
 
                 if (priority) {
-                    console.log('Processing priority:', priority);
                     if (priority === 'عالي') {
                         priorityLevel = 'high';
                         backgroundColor = '#e74c3c'; // Red for high priority (from database)
                         borderColor = '#c0392b';
-                        console.log('Set to HIGH priority - Red');
                     } else if (priority === 'متوسط') {
                         priorityLevel = 'medium';
                         backgroundColor = '#c0392b'; // Dark Red for medium priority (from database)
                         borderColor = '#a93226';
-                        console.log('Set to MEDIUM priority - Dark Red');
                     } else if (priority === 'منخفض') {
                         priorityLevel = 'low';
                         backgroundColor = '#f39c12'; // Orange for low priority (from database)
                         borderColor = '#e67e22';
-                        console.log('Set to LOW priority - Orange');
                     } else {
                         priorityLevel = 'low';
                         backgroundColor = '#27ae60'; // Default green for unknown priority
                         borderColor = '#229954';
-                        console.log('Unknown priority, using default GREEN');
                     }
-                } else {
-                    console.log('No priority found, using default LOW');
                 }
 
                 // Apply priority styling for all views
@@ -552,7 +866,6 @@
 
             // Handle view changes
             viewDidMount: function(info) {
-                console.log('View changed to:', info.view.type);
 
                 // Set dynamic heights based on number of events per day
                 if (info.view.type === 'dayGridMonth') {
@@ -592,6 +905,59 @@
 
         calendar.render();
 
+        // Mobile-specific calendar adjustments
+        function adjustCalendarForMobile() {
+            var isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // Adjust calendar height for mobile
+                var calendarEl = document.getElementById('calendar');
+                if (calendarEl) {
+                    calendarEl.style.height = 'auto';
+                    calendarEl.style.minHeight = '400px';
+                }
+                
+                // Adjust day cell heights dynamically
+                var dayCells = document.querySelectorAll('.fc-daygrid-day');
+                dayCells.forEach(function(dayCell) {
+                    var eventCount = dayCell.querySelectorAll('.fc-event').length;
+                    if (eventCount > 0) {
+                        dayCell.setAttribute('data-day-events', eventCount);
+                        
+                        // Adjust height based on event count for mobile
+                        if (eventCount >= 3) {
+                            dayCell.style.minHeight = '80px';
+                        } else if (eventCount >= 2) {
+                            dayCell.style.minHeight = '70px';
+                        } else {
+                            dayCell.style.minHeight = '60px';
+                        }
+                    }
+                });
+                
+                // Optimize event display for mobile
+                var events = document.querySelectorAll('.fc-event');
+                events.forEach(function(event) {
+                    // Make events more touch-friendly
+                    event.style.minHeight = '20px';
+                    event.style.fontSize = '8px';
+                    event.style.padding = '2px 4px';
+                    event.style.margin = '1px 2px';
+                    
+                    // Add touch feedback
+                    event.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.95)';
+                        this.style.opacity = '0.8';
+                    });
+                    
+                    event.addEventListener('touchend', function() {
+                        this.style.transform = 'scale(1)';
+                        this.style.opacity = '1';
+                    });
+                });
+            }
+        }
+
         // Set dynamic heights after calendar renders
         setTimeout(function() {
             var dayCells = document.querySelectorAll('.fc-daygrid-day');
@@ -601,7 +967,15 @@
                     dayCell.setAttribute('data-day-events', eventCount);
                 }
             });
+            
+            // Apply mobile adjustments
+            adjustCalendarForMobile();
         }, 300);
+        
+        // Reapply mobile adjustments on window resize
+        window.addEventListener('resize', function() {
+            setTimeout(adjustCalendarForMobile, 100);
+        });
 
         // Initialize tooltips after calendar renders
         setTimeout(function() {

@@ -30,16 +30,16 @@
 
     <!--begin::Card-->
     <div class="card card-custom">
-        <div class="card-header">
+        <div class="card-header" style="background: #29504D !important;">
             <div class="card-title">
                 <span class="card-icon">
-                    <i class="flaticon2-favourite text-primary"></i>
+                    <i class="flaticon2-user text-white"></i>
                 </span>
-                <h3 class="card-label">صلاحيات النظام</h3>
+                <h3 class="card-label" style="color: white !important;">صلاحيات النظام</h3>
             </div>
             <div class="card-toolbar">
                 <!--begin::Button-->
-                <a id="addRoleButton" class="btn btn-primary font-weight-bolder">
+                <a id="addRoleButton" class="btn btn-light font-weight-bolder">
                     إضافة صلاحية
                     <i class="la la-plus"></i>
                 </a>
@@ -54,7 +54,7 @@
                 </div>
                 &nbsp;
                 <!--begin::Dropdown-->
-                <div class="dropdown dropdown-inline mr-2">
+                @* <div class="dropdown dropdown-inline mr-2">
                     <button type="button" class="btn btn-light-primary font-weight-bolder dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         طباعة
                         <i class="la la-download"></i>
@@ -96,7 +96,7 @@
                         </ul>
                     </div>
                     <!--end::Dropdown Menu-->
-                </div>
+                </div> *@
                 <!--end::Dropdown-->
             </div>
         </div>
@@ -135,56 +135,59 @@
                             </div>
                         </div>
                         <div class="card-body p-0">
-                            <table class="table table-bordered table-hover table-checkable mb-0">
-                                <thead class="thead-light">
-                                    <tr role="row">
-                                        <th>اسم الصلاحية</th>
-                                        <th>اسم الصلاحية عربي</th>
-                                        <th>وصف الصلاحية</th>
-                                        <th>ادخال بواسطة</th>
-                                        <th>تاريخ الانشاء</th>
-                                        <th>الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var role in roleStatus.OrderBy(r => r.Name))
-                                    {
-                                        <tr>
-                                            <td>
-                                                <span class="font-weight-bold text-dark">@role.Name</span>
-                                            </td>
-                                            <td>
-                                                <span class="text-muted">@role.RoleNameArabic</span>
-                                            </td>
-                                            <td>
-                                                <span class="text-muted">@role.Description</span>
-                                            </td>
-                                            <td>
-                                                <span class="text-muted">@role.CreatedById</span>
-                                            </td>
-                                            <td>
-                                                <span class="text-muted">@role.CreatedDate.Value.ToString("yyyy/MM/dd")</span>
-                                            </td>
-                                            <td class="actions-cell">
-                                                <div class="actions-buttons">
-                                                    <a id="updateRoleButton" onclick="updateRoleButton('@role.Id')" class="btn btn-sm btn-default btn-text-primary btn-hover-primary btn-icon" title="تعديل الصلاحية">
-                                                        <i class="la la-edit"></i>
-                                                    </a>
-                                                    @if (role.IsDeleted != true)
-                                                    {
-                                                        <a onclick="deleteRoleButton('@role.Id')" class="btn btn-sm btn-default btn-text-primary btn-hover-primary btn-icon" title="حذف الصلاحية">
-                                                            <i class="la la-trash"></i>
-                                                        </a>
-                                                    }
-                                                    <a onclick="addRolePermissionButton('@role.Id')" class="btn btn-sm btn-default btn-text-primary btn-hover-primary btn-icon" title="صلاحيات الشاشات">
-                                                        <i class="flaticon2-document"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
+
+                            <div class="table-responsive mt-4">
+                                <table class="table table-bordered table-hover table-checkable mb-0">
+                                    <thead style="background: #29504D !important; color: white !important;">
+                                        <tr role="row">
+                                            <th>اسم الصلاحية</th>
+                                            <th>اسم الصلاحية عربي</th>
+                                            <th>وصف الصلاحية</th>
+                                            <th>ادخال بواسطة</th>
+                                            <th>تاريخ الانشاء</th>
+                                            <th>الإجراءات</th>
                                         </tr>
-                                    }
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var role in roleStatus.OrderBy(r => r.Name))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <span class="font-weight-bold text-dark">@role.Name</span>
+                                                </td>
+                                                <td>
+                                                    <span class="text-muted">@role.RoleNameArabic</span>
+                                                </td>
+                                                <td>
+                                                    <span class="text-muted">@role.Description</span>
+                                                </td>
+                                                <td>
+                                                    <span class="text-muted">@role.CreatedById</span>
+                                                </td>
+                                                <td>
+                                                    <span class="text-muted">@role.CreatedDate.Value.ToString("yyyy/MM/dd")</span>
+                                                </td>
+                                                <td class="actions-cell">
+                                                    <div class="actions-buttons">
+                                                        <a id="updateRoleButton" onclick="updateRoleButton('@role.Id')" class="btn btn-sm btn-default btn-text-primary btn-hover-primary btn-icon" title="تعديل الصلاحية">
+                                                            <i class="la la-edit"></i>
+                                                        </a>
+                                                        @if (role.IsDeleted != true)
+                                                        {
+                                                            <a onclick="deleteRoleButton('@role.Id')" class="btn btn-sm btn-default btn-text-primary btn-hover-primary btn-icon" title="حذف الصلاحية">
+                                                                <i class="la la-trash"></i>
+                                                            </a>
+                                                        }
+                                                        <a onclick="addRolePermissionButton('@role.Id')" class="btn btn-sm btn-default btn-text-primary btn-hover-primary btn-icon" title="صلاحيات الشاشات">
+                                                            <i class="flaticon2-document"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 }

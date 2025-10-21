@@ -1,9 +1,10 @@
-@font-face {
+﻿@font-face {
     font-family: 'Tajawal';
     src: url('/fonts/tajawal/Tajawal-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'Tajawal';
     src: url('/fonts/tajawal/Tajawal-Bold.ttf') format('truetype');
@@ -25,30 +26,30 @@ label, th, td, li, ul, ol {
 }
 
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
 .bg-primary {
-    background-color:#29504D !important;
+    background-color: #29504D !important;
 }
 
 /* Only apply to the top-level menu */
@@ -62,31 +63,31 @@ body {
     /* Remove overflow-x: auto here */
 }
 
-.header-menu .menu-nav {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center;
-    white-space: nowrap;
-    width: 100%;
-    /* Remove overflow-x: auto here */
-}
+    .header-menu .menu-nav {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center;
+        white-space: nowrap;
+        width: 100%;
+        /* Remove overflow-x: auto here */
+    }
 
-.header-menu .menu-item {
-    white-space: nowrap;
-}
+    .header-menu .menu-item {
+        white-space: nowrap;
+    }
 
-/* Fix for submenus: allow them to wrap and be visible */
-.header-menu .menu-submenu {
-    white-space: normal !important;
-    overflow: visible !important;
-    position: absolute !important;
-    right: 0; /* For RTL, adjust as needed */
-    left: auto;
-    z-index: 9999;
-    min-width: 200px; /* or your preferred width */
-    max-width: 400px; /* optional */
-}
+    /* Fix for submenus: allow them to wrap and be visible */
+    .header-menu .menu-submenu {
+        white-space: normal !important;
+        overflow: visible !important;
+        position: absolute !important;
+        right: 0; /* For RTL, adjust as needed */
+        left: auto;
+        z-index: 9999;
+        min-width: 200px; /* or your preferred width */
+        max-width: 400px; /* optional */
+    }
 
 .header-menu-wrapper {
     flex: 1 1 0;
@@ -114,14 +115,16 @@ body {
     border-radius: 1.5rem 0 0 1.5rem;
     box-shadow: 0 0 20px rgba(0,0,0,0.08);
 }
-.sticky-toolbar .nav-item {
-    display: flex;
-    justify-content: center;
-}
-.sticky-toolbar .btn {
-    margin-bottom: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
+
+    .sticky-toolbar .nav-item {
+        display: flex;
+        justify-content: center;
+    }
+
+    .sticky-toolbar .btn {
+        margin-bottom: 0.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
 
 /* Dark Mode Styles */
 body.dark-mode {
@@ -129,19 +132,23 @@ body.dark-mode {
     color: #f1f1f1 !important;
     transition: background 0.3s, color 0.3s;
 }
-body.dark-mode .bg-primary {
-    background-color: #222e3c !important;
-}
-body.dark-mode .card, body.dark-mode .modal-content {
-    background-color: #23272b !important;
-    color: #f1f1f1 !important;
-}
-body.dark-mode .header, body.dark-mode .header-mobile {
-    background-color: #222e3c !important;
-}
-body.dark-mode .menu-nav .menu-item > .menu-link {
-    color: #f1f1f1 !important;
-}
+
+    body.dark-mode .bg-primary {
+        background-color: #222e3c !important;
+    }
+
+    body.dark-mode .card, body.dark-mode .modal-content {
+        background-color: #23272b !important;
+        color: #f1f1f1 !important;
+    }
+
+    body.dark-mode .header, body.dark-mode .header-mobile {
+        background-color: #222e3c !important;
+    }
+
+    body.dark-mode .menu-nav .menu-item > .menu-link {
+        color: #f1f1f1 !important;
+    }
 
 /* Optional: Smooth transition for theme change */
 body, .card, .header, .header-mobile {
